@@ -5,7 +5,7 @@
   ("git-gutter-fr:side" .
    [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
   ("setq" .
-   [1 0 0 0])
+   [2 0 0 0])
   ("git-gutter-fringe" .
    [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
   ("delete-trailing-whitespace" .
@@ -27,4 +27,14 @@
   ("global-git-gutter-mode-cmhh" .
    [0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
   ("ace-window" .
-   [1 0 0 0 0 0 0 0 0 0])))
+   [1 0 0 0 0 0 0 0 0 0])
+  ("init-dir" .
+   [1 0 0 0 0 0 0 0])
+  ("file-name-directory" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0])
+  ("or" .
+   [1 0])
+  ("load-file-name" .
+   [1 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("buffer-file-name" .
+   [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])))

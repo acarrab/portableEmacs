@@ -4,20 +4,20 @@
 
 - Basically used to quickly set up a configuration for emacs for my personal use. 
 
-** Used packages
-*** Searching
+* Packages
+** Searching
 ***** which-key
 - Gives key suggestions when pressing key sequences
 ***** counsel
 - Required by swiper for files
 ***** swiper
 - File searching
-*** Magit
+** Magit
 - Uses magit
-*** Org Mode
+** Org Mode
 ***** org-bullets
 - Creates nice bullets in org mode
-*** Style
+** Style
 ***** rainbow-delimiters
 - Delimiters are matched by color
 

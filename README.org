@@ -1,8 +1,9 @@
+  .
 # portableEmacs
-
+[[~/Desktop/courses/todo.org][Courses]]
 * Portable Emacs
 
-- Basically used to quickly set up a configuration for emacs for my personal use. 
+- Basically used to quickly set up a configuration for emacs for my personal use.
 
 * Packages
 ** Searching

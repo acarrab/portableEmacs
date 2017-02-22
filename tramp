@@ -1,4 +1,4 @@
-;; -*- emacs-lisp -*- <17/02/21 23:06:58 /home/acarrab/.emacs.d/tramp>
+;; -*- emacs-lisp -*- <17/02/22 15:49:39 /home/acarrab/.emacs.d/tramp>
 ;; Tramp connection history.  Don't change this file.
 ;; You can delete it, forcing Tramp to reapply the checks.
 
@@ -15,7 +15,16 @@
   ("file-exists" "test -e")
   ("id" "/usr/bin/id")
   ("gid-integer" 10000)
-  ("gid-string" "cuuser"))
+  ("gid-string" "cuuser")
+  ("perl-file-spec" t)
+  ("perl-cwd-realpath" t)
+  ("perl" "\\perl")
+  ("readlink" "\\readlink")
+  ("git" "\\git")
+  ("uid-integer" 257740)
+  ("tmpdir" "/ssh:acarrab@user.palmetto.clemson.edu:/tmp")
+  ("touch-t" t)
+  ("touch" "\\touch"))
  (["sftp" "acarrab" "access.cs.clemson.edu" nil nil]
   ("uid-integer" 1000)
   ("gid-integer" 1000)

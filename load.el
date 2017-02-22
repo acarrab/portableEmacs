@@ -51,8 +51,8 @@
   (which-key-mode))
 ;; Swiper addition with ivy
 
-(use-package counsel
-  :ensure t)
+(use-package counsel :ensure t)
+(global-set-key (kbd "M-y") 'counsel-yank-pop)
 
 (use-package swiper
   :ensure try
@@ -77,6 +77,11 @@
     (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
     (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
     ))
+
+(defun ivy-show-kill-ring ()
+  (interactive)
+  (ivy-read "kill-ring: " (helm-kill-ring-candidates)
+            :action 'insert))
 
 (use-package ivy-hydra :ensure t)
 
@@ -127,9 +132,7 @@
 (global-highlight-parentheses-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;; Rainbow Delimiters ;;;;;;;;;;;;;;;;;;;;;;;;
-(use-package rainbow-delimiters
-  :ensure t
-  )
+(use-package rainbow-delimiters    :ensure t )
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 (require 'rainbow-delimiters)
 
@@ -145,3 +148,41 @@
 (defun my-bell-function())
 (setq ring-bell-function 'my-bell-function)
 (setq visible-bell nil)
+
+(defun myCustomStartup ()
+  "Custom startup file"
+  (interactive)
+  (switch-to-buffer "StArTuP")
+  (StartuP-init)
+  )
+
+(defvar StartuP-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "\RET" 'org-open-at-point)
+    (define-key map "\M-m\f"  'org-open-at-point)
+    map)
+  "Keymap for 'StartuP-mode.")
+
+(define-derived-mode StartuP-mode org-mode "StArTuP-mode"
+  "Major mode for startup.
+\\{StartuP-mode-map})"
+  (setq case-fold-search nil))
+
+(add-hook 'StartuP-mode-hook
+          '(lambda ()
+             (local-set-key (kbd "RET") 'org-open-at-point))
+          )
+
+(defun StartuP-init ()
+  "What startup does"
+  (StartuP-mode)
+  (read-only-mode)
+  (loadAFile "~/.emacs.d/emacsWelcome.org")
+  (loadAFile "~/Desktop/courses/todo.org")
+   )
+
+
+(defun loadAFile (fileName)
+  (let ((inhibit-read-only t))
+    (insert-file (expand-file-name fileName))
+  ))

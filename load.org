@@ -93,9 +93,10 @@ Gives key suggestions while typing key bindings
 *** ivy
 Finds you things (tm)
 #+BEGIN_SRC emacs-lisp
-  (use-package counsel
-    :ensure t)
-
+  (use-package counsel :ensure t)
+  (global-set-key (kbd "M-y") 'counsel-yank-pop)
+#+END_SRC
+#+BEGIN_SRC emacs-lisp
   (use-package swiper
     :ensure try
     :config
@@ -119,6 +120,13 @@ Finds you things (tm)
       (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
       (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
       ))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defun ivy-show-kill-ring ()
+  (interactive)
+  (ivy-read "kill-ring: " (helm-kill-ring-candidates)
+            :action 'insert))
 #+END_SRC
 This is used in order to be able to query information about a command
 C-s C-o
@@ -201,9 +209,7 @@ I may you ispell or fly spell
 *** fancy delimiters
 #+BEGIN_SRC emacs-lisp
   ;;;;;;;;;;;;;;;;;;;;;;;; Rainbow Delimiters ;;;;;;;;;;;;;;;;;;;;;;;;
-  (use-package rainbow-delimiters
-    :ensure t
-    )
+  (use-package rainbow-delimiters    :ensure t )
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
   (require 'rainbow-delimiters)
 #+END_SRC
@@ -230,4 +236,54 @@ Maybe get rid of bell if I upgrade to emacs 25.1
 (defun my-bell-function())
 (setq ring-bell-function 'my-bell-function)
 (setq visible-bell nil)
+#+END_SRC
+* Startup
+
+#+BEGIN_SRC shell :exports none
+  python -m pip install --user pexpect
+#+END_SRC
+
+#+BEGIN_SRC  python
+import pexpect, os
+os.chdir("~/Desktop/courses/")
+pexpect.run("git pull")
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+    (defun myCustomStartup ()
+      "Custom startup file"
+      (interactive)
+      (switch-to-buffer "StArTuP")
+      (StartuP-init)
+      )
+
+    (defvar StartuP-mode-map
+      (let ((map (make-sparse-keymap)))
+        (define-key map "\RET" 'org-open-at-point)
+        (define-key map "\M-m\f"  'org-open-at-point)
+        map)
+      "Keymap for 'StartuP-mode.")
+
+    (define-derived-mode StartuP-mode org-mode "StArTuP-mode"
+      "Major mode for startup.
+    \\{StartuP-mode-map})"
+      (setq case-fold-search nil))
+
+    (add-hook 'StartuP-mode-hook
+              '(lambda ()
+                 (local-set-key (kbd "RET") 'org-open-at-point))
+              )
+
+    (defun StartuP-init ()
+      "What startup does"
+      (StartuP-mode)
+      (read-only-mode)
+      (loadAFile "~/Desktop/courses/todo.org")
+       )
+
+
+    (defun loadAFile (fileName)
+      (let ((inhibit-read-only t))
+        (insert-file (expand-file-name fileName))
+      ))
 #+END_SRC

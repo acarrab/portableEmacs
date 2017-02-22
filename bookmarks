@@ -2,7 +2,24 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("Todo"
+(("School Computer"
+ (filename . "/sftp:acarrab@access.cs.clemson.edu:/home/acarrab/Desktop/")
+ (front-context-string . "212\n  drwx--x--x")
+ (rear-context-string . "096 02-01 13:39 ")
+ (position . 232))
+(#("Palmetto Scratch" 0 16
+   (face ivy-virtual))
+ (filename . "/ssh:acarrab@user.palmetto.clemson.edu:/scratch3/acarrab/")
+ (front-context-string)
+ (rear-context-string . "96 Feb 21 17:39 ")
+ (position . 233))
+(#("OpenGL-Bunny" 0 12
+   (face ivy-virtual))
+ (filename . "~/Desktop/OpenGL-Bunny/")
+ (front-context-string . "bunny.c\n  -rw-rw")
+ (rear-context-string . "97 Feb 15 21:35 ")
+ (position . 254))
+("Todo"
  (filename . "~/Desktop/courses/todo.org")
  (front-context-string . "* Classes\n** Alg")
  (rear-context-string)

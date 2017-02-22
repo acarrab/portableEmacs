@@ -84,7 +84,7 @@ once you are familiar with the contents of the startup screen."
     ))
 ;;;;;;;;;;;;;;;;;;;;;;;; Rainbow Delimiters ;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package rainbow-delimiters
-  :ensure t 
+  :ensure t
   )
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 (require 'rainbow-delimiters)
@@ -98,16 +98,31 @@ once you are familiar with the contents of the startup screen."
 
 
 
-;;;;;;;;;;;;;;;;;;;;;;;; Some Magit ;;;;;;;;;;;;;;;;;;;;;;;;
-(use-package magit
-  :ensure t
-  )
+;;;;;;;;;;;;;;;;;;;;;;;; Some Git ;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package magit :ensure t)
+(use-package dired-k :ensure t)
 
-(use-package suscolors
-  :ensure t
-  )
+;;;;;;;;;;;;;;;;;;;;;;;; Major-Modes ;;;;;;;;;;;;;;;;;;;;;;;
+;;----------- R editing -------------------
+(use-package ess :ensure t)
+;;----------- Shader editing --------------
+(use-package shader-mode :ensure t)
+;;----------- Python additions ------------
+(use-package anaconda-mode :ensure t)
+;;----------- IPython! --------------------
+(use-package ein  :ensure t)
+;;------------ Fix python imports with ----
+(use-package importmagic :ensure t)
+;;------------ Setting to ide -------------
+(use-package virtualenv :ensure t)
+(use-package edit-server :ensure t)
+(use-package jedi :ensure t)
 
-
+;;;;;;;;;;;;;;;;;;;;;;;; Adds my theme ;;;;;;;;;;;;;;;;;;;;;
+(use-package suscolors-theme
+  :ensure t)
+;;;;;;;;;;;;;;;;;;;; Smaller Customization ;;;;;;;;;;;;;;;;;
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 
 
@@ -142,4 +157,3 @@ once you are familiar with the contents of the startup screen."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((t (:family "Source Code Pro" :foundry "ADBO" :slant normal :weight normal :height 100 :width normal :powerline-scale 1.1)))))
-

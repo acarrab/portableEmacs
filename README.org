@@ -20,4 +20,10 @@
 ** Style
 ***** rainbow-delimiters
 - Delimiters are matched by color
-
+** Common Major Modes
+***** ess
+- Emacs Speaks Statistics
+  - In my opinion, one of the best ways to use R
+***** shader-mode
+- Used for editing RSL code
+- Used in computer graphics course

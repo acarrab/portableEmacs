@@ -1,16 +1,30 @@
-((("push" .
-   [2 0 0 0])
-  (":ensure" .
-   [12 0 0 0 0 0 0])
-  ("use-package" .
-   [12 0 0 0 0 0 0 0 0 0 1])
-  ("package" .
-   [1 0 0 0 0 0 0])
-  ("require" .
-   [1 0 0 0 0 0 0])
-  ("add-hook" .
-   [1 0 0 0 0 0 0 0])
+((("global-git-gutter-mode" .
+   [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("right-fringe" .
+   [1 0 0 0 0 0 0 0 0 0 0 0])
+  ("git-gutter-fr:side" .
+   [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("setq" .
+   [1 0 0 0])
+  ("git-gutter-fringe" .
+   [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("delete-trailing-whitespace" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0])
   ("before-save-hook" .
    [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
-  ("delete-trailing-whitespace" .
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0])))
+  ("add-hook" .
+   [1 0 0 0 0 0 0 0])
+  ("require" .
+   [2 0 0 0 0 0 0])
+  ("package" .
+   [1 0 0 0 0 0 0])
+  ("use-package" .
+   [14 0 0 0 0 0 0 0 0 0 2])
+  (":ensure" .
+   [14 0 0 0 0 0 0])
+  ("push" .
+   [2 0 0 0])
+  ("global-git-gutter-mode-cmhh" .
+   [0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("ace-window" .
+   [1 0 0 0 0 0 0 0 0 0])))

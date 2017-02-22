@@ -88,6 +88,7 @@ once you are familiar with the contents of the startup screen."
   )
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 (require 'rainbow-delimiters)
+(setq git-gutter-fr:side 'right-fring)
 
 ;;;;;;;;;;;;;;;;;;;;;;;; ORG MODE ;;;;;;;;;;;;;;;;;;;;;;;;
 (setq org-startup-with-inline-images t)
@@ -101,6 +102,14 @@ once you are familiar with the contents of the startup screen."
 ;;;;;;;;;;;;;;;;;;;;;;;; Some Git ;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package magit :ensure t)
 (use-package dired-k :ensure t)
+(use-package git-gutter-fringe :ensure t)
+(require 'git-gutter-fringe)
+(global-git-gutter-mode +1)
+(setq git-gutter-fr:side 'right-fringe)
+
+;;;;;;;;;;;;;;;;;;;;;;; Jump around Windows ;;;;;;;;;;;;;;;;
+(use-package ace-window :ensure t)
+(global-set-key (kbd "M-p") 'ace-window)
 
 ;;;;;;;;;;;;;;;;;;;;;;;; Major-Modes ;;;;;;;;;;;;;;;;;;;;;;;
 ;;----------- R editing -------------------

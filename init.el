@@ -9,8 +9,6 @@
   "Emacs start-up procedure."
   :group 'environment)
 
-
-
 (defcustom inhibit-startup-screen nil
   "Non-nil inhibits the startup screen.
 
@@ -105,7 +103,9 @@ once you are familiar with the contents of the startup screen."
   :ensure t
   )
 
-(use-package suscolors)
+(use-package suscolors
+  :ensure t
+  )
 
 
 

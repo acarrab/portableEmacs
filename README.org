@@ -1,0 +1,23 @@
+# portableEmacs
+
+* Portable Emacs
+
+- Basically used to quickly set up a configuration for emacs for my personal use. 
+
+** Used packages
+**** Searching
+****** which-key
+- Gives key suggestions when pressing key sequences
+****** counsel
+- Required by swiper for files
+****** swiper
+- File searching
+**** Magit
+- Uses magit
+**** Org Mode
+****** org-bullets
+- Creates nice bullets in org mode
+**** Style
+****** rainbow-delimiters
+- Delimiters are matched by color
+

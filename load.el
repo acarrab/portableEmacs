@@ -37,14 +37,6 @@
 
 (use-package try :ensure t)
 
-(use-package org-bullets
-  :ensure t
-  :config
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-(setq org-startup-with-inline-images t)
-(setq org-src-fontify-natively t)
-(setq org-src-tab-acts-natively t)
-
 (use-package which-key
   :ensure t
   :config
@@ -128,7 +120,7 @@
   :diminish highlight-parentheses-mode
   :config
   (add-hook 'emacs-lisp-mode-hook
-            (lambda() (highligh-parentheses-mode))))
+            (lambda() (highlight-parentheses-mode))))
 (global-highlight-parentheses-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;; Rainbow Delimiters ;;;;;;;;;;;;;;;;;;;;;;;;
@@ -149,7 +141,17 @@
 (setq ring-bell-function 'my-bell-function)
 (setq visible-bell nil)
 
-(defun myCustomStartup ()
+(use-package org-bullets
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+(setq org-startup-with-inline-images t)
+(setq org-src-fontify-natively t)
+(setq org-src-tab-acts-natively t)
+
+(setq org-log-done 'time)
+
+(defun custom-startup ()
   "Custom startup file"
   (interactive)
   (switch-to-buffer "StArTuP")
@@ -166,6 +168,7 @@
 (define-derived-mode StartuP-mode org-mode "StArTuP-mode"
   "Major mode for startup.
 \\{StartuP-mode-map})"
+  (setq org-startup-folded t)
   (setq case-fold-search nil))
 
 (add-hook 'StartuP-mode-hook
@@ -177,8 +180,8 @@
   "What startup does"
   (StartuP-mode)
   (read-only-mode)
-  (loadAFile "~/.emacs.d/emacsWelcome.org")
   (loadAFile "~/Desktop/courses/todo.org")
+  (org-overview)
    )
 
 
@@ -186,3 +189,7 @@
   (let ((inhibit-read-only t))
     (insert-file (expand-file-name fileName))
   ))
+
+(setq inhibit-startup-screen t)
+(setq inhibit-startup-message t)
+(custom-startup)

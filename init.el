@@ -19,11 +19,9 @@
     ("b9b1a8d2ec1d5c17700e1a09256f33c2520b26f49980ed9e217e444c381279a9" default)))
  '(inhibit-default-init t)
  '(inhibit-startup-buffer-menu t)
- '(inhibit-startup-screen nil)
+ '(inhibit-startup-screen t)
  '(initial-major-mode (quote org-mode))
- '(initial-scratch-message "
-* Welcome To Emacs
-")
+ '(initial-scratch-message nil)
  '(tool-bar-mode nil))
 
 (custom-set-faces

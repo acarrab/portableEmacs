@@ -1,3 +1,0 @@
-# portableEmacs
-[[~/.emacs.d/emacsWelcome.org][Edit_Welcome]]
-[[~/Desktop/courses][Courses]]

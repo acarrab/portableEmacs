@@ -1,0 +1,5 @@
+(defun remove-comments ()
+  "remove comments for bookmarks"
+  (while (string-match ";+.*\n" current-buffer)
+    (setq current-buffer (replace-match "" t t current-buffer)))
+  )

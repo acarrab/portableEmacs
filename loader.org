@@ -3,10 +3,16 @@
 #+OPTIONS: H:5 num:nil tags:nil timestamps:t
 * TODO Add spellcheck
 * TODO Decide what to use for javascript editing
-* TODO add compnay support
-* TODO add yank history thing with swiper interface
+* TODO add company support
 
-
+* Notes
+** Useful functions
+*** String Manipulation
+number-to-string
+concat
+substring
+*** Printing to buffer
+(message "The name of this buffer is %s." (buffer-name))
 * Securing Emacs Environment
 This section is borrowed from [[https://gitlab.com/buildfunthings/emacs-config][buildfunthings]]
 - This installs certifi library for checking the certificate of
@@ -85,6 +91,7 @@ Finds you things (tm)
   (global-set-key (kbd "M-y") 'counsel-yank-pop)
 #+END_SRC
 #+BEGIN_SRC emacs-lisp
+  (use-package smex :ensure t)
   (use-package swiper
     :ensure try
     :config
@@ -168,9 +175,22 @@ This is ess, the best way I've seen of interacting with R code
   (use-package ess :ensure t)
 #+END_SRC
 *** Computer-graphics - Shaders
+Adds shader mode package
 #+BEGIN_SRC emacs-lisp
   (use-package shader-mode :ensure t)
 #+END_SRC
+We also have to make sure that it starts on specific file extensions,
+so that we don't have to type "M-x shader-mode" every time we open
+those files.
+#+BEGIN_SRC emacs-lisp
+  (setq auto-mode-alist (append '(("\\.vert$" . shader-mode))
+                                auto-mode-alist))
+  (setq auto-mode-alist (append '(("\\.frag$" . shader-mode))
+                                auto-mode-alist))
+#+END_SRC
+
+#+RESULTS:
+
 
 *** Website Development
 #+BEGIN_SRC emacs-lisp
@@ -283,17 +303,51 @@ pexpect.run("git pull")
     "What startup does"
     (StartuP-mode)
     (read-only-mode)
-    (loadAFile "~/Desktop/courses/todo.org")
+   ;(insertBookmarks)
+    (erase-buffer)
+    (insertAFile "~/Desktop/courses/todo.org")
     (org-overview)
      )
 
 
-  (defun loadAFile (fileName)
+  (defun insertAFile (fileName)
     (let ((inhibit-read-only t))
       (insert-file (expand-file-name fileName))
     ))
+
+  (defun insertBookmarks ()
+    (let ((inhibit-read-only t))
+      (bookmark-insert bookmark)
+    ))
 #+END_SRC
 
+
+[[https://www.gnu.org/software/emacs/manual/html_node/elisp/Regexp-Special.html#Regexp-Special][Documentation for regex]]
+
+
+#+BEGIN_SRC emacs-lisp
+;;  (defun bookmarks-to-org-links ()
+;;    "Get a list of all bookmarks in org format for a link"
+;;    (with-temp-buffer
+;;      (insert-file-contents (expand-file-name "~/.emacs.d/bookmarks"))
+;;      (while (string-match "\"\\(.*\\)\"[.\n]* (filename . \"\\(.*\\)\"" (buffer-string))
+;;        (push ())
+;;      ))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (defun remove-comments ()
+    "remove comments for bookmarks"
+    (while (string-match ";+.*\n" current-buffer)
+      (setq current-buffer (replace-match "" t t current-buffer)))
+    )
+#+END_SRC
+
+#+RESULTS:
+: remove-comments
+
+
+Some settings
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-startup-screen t)
   (setq inhibit-startup-message t)

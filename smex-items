@@ -1,0 +1,23 @@
+
+;; ----- smex-history -----
+(
+ org-babel-execute-src-block
+ custom-startup
+ shader-mode
+ shell
+ c++-mode
+ term
+ package-install
+)
+
+;; ----- smex-data -----
+(
+ (custom-startup . 6)
+ (term . 3)
+ (shell . 12)
+ (jedi-mode . 1)
+ (package-install . 1)
+ (c++-mode . 2)
+ (shader-mode . 2)
+ (org-babel-execute-src-block . 1)
+)

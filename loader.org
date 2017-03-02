@@ -1,24 +1,24 @@
 #+TITLE: Emacs Configuration
 #+STARTUP: indent
 #+OPTIONS: H:5 num:nil tags:nil timestamps:t
+** Notes
+*** TODO Add spellcheck
 
-* TODO Add spellcheck
-* TODO Decide what to use for javascript editing
-* TODO add company support
+*** TODO Decide what to use for javascript editing
 
-* Notes
-** Useful functions
-*** String Manipulation
+*** TODO add company support
+*** Useful functions
+**** String Manipulation
 number-to-string
 concat
 substring
-*** Printing to buffer
+**** Printing to buffer
 (message "The name of this buffer is %s." (buffer-name))
-* Securing Emacs Environment
+** Securing Emacs Environment
 This section is borrowed from [[https://gitlab.com/buildfunthings/emacs-config][buildfunthings]]
 - This installs certifi library for checking the certificate of
   package repo's we connect to
-** Setup
+*** Setup
 #+BEGIN_SRC shell :exports none
   python -m pip install --user certifi
 #+END_SRC
@@ -46,8 +46,8 @@ This section is borrowed from [[https://gitlab.com/buildfunthings/emacs-config][
   ;;   (setq gnutls-trustfiles (list trustfile)))
 #+END_SRC
 
-** Installing use-package securely...
-*** Setup
+*** Installing use-package securely...
+**** Setup
 - We need to tell emacs where to find packages that we may want to
   download.
 - Without this, it would be difficult to install new processes
@@ -74,10 +74,10 @@ This section is borrowed from [[https://gitlab.com/buildfunthings/emacs-config][
 
   (use-package try :ensure t)
 #+END_SRC
-* Movement
-** Searching
+** Movement
+*** Searching
 Gives key suggestions while typing key bindings
-*** which-key
+**** which-key
 #+BEGIN_SRC emacs-lisp
   (use-package which-key
     :ensure t
@@ -85,7 +85,7 @@ Gives key suggestions while typing key bindings
     (which-key-mode))
   ;; Swiper addition with ivy
 #+END_SRC
-*** ivy
+**** ivy
 Finds you things (tm)
 #+BEGIN_SRC emacs-lisp
   (use-package counsel :ensure t)
@@ -140,13 +140,13 @@ C-s C-o
       ))
 #+END_SRC
 
-*** Window Movement
+**** Window Movement
 One of best ways to move around many windows in my opinion
 #+BEGIN_SRC emacs-lisp
   (use-package ace-window :ensure t)
   (global-set-key (kbd "C-x M-o") 'ace-window)
 #+END_SRC
-* Git related
+** Git related
 #+BEGIN_SRC emacs-lisp
   (use-package magit :ensure t)
   (use-package dired-k :ensure t)
@@ -155,9 +155,9 @@ One of best ways to move around many windows in my opinion
   (global-git-gutter-mode +1)
   (setq git-gutter-fr:side 'right-fringe)
 #+END_SRC
-* Commonly used major-modes
-** Languages
-*** Python
+** Commonly used major-modes
+*** Languages
+**** Python
 #+BEGIN_SRC emacs-lisp
   ;;----------- Python additions ------------
   (use-package anaconda-mode :ensure t)
@@ -170,12 +170,12 @@ One of best ways to move around many windows in my opinion
   (use-package edit-server :ensure t)
   (use-package jedi :ensure t)
 #+END_SRC
-*** R
+**** R
 This is ess, the best way I've seen of interacting with R code
 #+BEGIN_SRC emacs-lisp
   (use-package ess :ensure t)
 #+END_SRC
-*** Computer-graphics - Shaders
+**** Computer-graphics - Shaders
 Adds shader mode package
 #+BEGIN_SRC emacs-lisp
   (use-package shader-mode :ensure t)
@@ -193,19 +193,19 @@ those files.
 #+RESULTS:
 
 
-*** Website Development
+**** Website Development
 #+BEGIN_SRC emacs-lisp
 (use-package web-mode :ensure t)
 #+END_SRC
-* Spellchecking
+** Spellchecking
 I may you ispell or fly spell
 #+BEGIN_SRC emacs-lisp
 #+END_SRC
-* Fancy stuff
+** Fancy stuff
 
-*** paredit
+**** paredit
 - I have to learn this in order to use
-*** highlighting parentheses
+**** highlighting parentheses
 #+BEGIN_SRC emacs-lisp
   (use-package highlight-parentheses
     :ensure t
@@ -215,7 +215,7 @@ I may you ispell or fly spell
               (lambda() (highlight-parentheses-mode))))
   (global-highlight-parentheses-mode)
 #+END_SRC
-*** fancy delimiters
+**** fancy delimiters
 #+BEGIN_SRC emacs-lisp
   ;;;;;;;;;;;;;;;;;;;;;;;; Rainbow Delimiters ;;;;;;;;;;;;;;;;;;;;;;;;
   (use-package rainbow-delimiters    :ensure t )
@@ -223,7 +223,7 @@ I may you ispell or fly spell
   (require 'rainbow-delimiters)
 #+END_SRC
 
-* Random
+** Random
 #+BEGIN_SRC emacs-lisp
   ;;;;;;;;;;;;;;;;;;;;;;;; Preference ;;;;;;;;;;;;;;;;;;;;;;;;
   (prefer-coding-system 'utf-8)
@@ -246,7 +246,7 @@ Maybe get rid of bell if I upgrade to emacs 25.1
 (setq ring-bell-function 'my-bell-function)
 (setq visible-bell nil)
 #+END_SRC
-* Org Additions
+** Org Additions
 This adds the nicer bullets to org mode.
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
@@ -262,7 +262,7 @@ Generic org mode settings for startup
 (setq org-log-done 'time)
 #+END_SRC
 
-* Startup
+** Startup
 
 #+BEGIN_SRC shell :exports none
   python -m pip install --user pexpect

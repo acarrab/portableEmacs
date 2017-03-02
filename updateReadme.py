@@ -8,4 +8,9 @@ fout = ReadMe.split(startTag)
 if len(fout) > 1:
     fout = [fout[0]] + fout[1].split(endTag)
     if len(fout) == 3:
-        open('./README.org', 'w').write(fout[0] + loader + fout[2])
+        open('./README.org', 'w').write(\
+                                        fout[0] +
+                                        startTag + '\n' + \
+                                        loader + \
+                                        endTag + '\n' + \
+                                        fout[2])

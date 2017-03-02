@@ -13,7 +13,6 @@ make
 
 * Configuration File
 # <configure start>
-#+TITLE: Emacs Configuration
 #+STARTUP: indent
 #+OPTIONS: H:5 num:nil tags:nil timestamps:t
 ** Notes
@@ -369,6 +368,7 @@ Some settings
   (custom-startup)
 #+END_SRC
 # <configure end>
+
 
 
 

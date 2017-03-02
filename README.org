@@ -31,7 +31,7 @@ make loader
 *** Todo list
 - Add spellcheck
 - Decide what to use for javascript editing
-- TODO add company support
+- add company support
 *** Useful functions
 - String Manipulation
   - number-to-string

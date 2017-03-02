@@ -144,7 +144,7 @@ C-s C-o
 One of best ways to move around many windows in my opinion
 #+BEGIN_SRC emacs-lisp
   (use-package ace-window :ensure t)
-  (global-set-key (kbd "M-p") 'ace-window)
+  (global-set-key (kbd "C-x M-o") 'ace-window)
 #+END_SRC
 * Git related
 #+BEGIN_SRC emacs-lisp

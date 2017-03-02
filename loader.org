@@ -2,17 +2,16 @@
 #+STARTUP: indent
 #+OPTIONS: H:5 num:nil tags:nil timestamps:t
 ** Notes
-*** TODO Add spellcheck
-
-*** TODO Decide what to use for javascript editing
-
-*** TODO add company support
+*** Todo list
+- Add spellcheck
+- Decide what to use for javascript editing
+- TODO add company support
 *** Useful functions
-**** String Manipulation
+- String Manipulation
 number-to-string
 concat
 substring
-**** Printing to buffer
+- Printing to buffer
 (message "The name of this buffer is %s." (buffer-name))
 ** Securing Emacs Environment
 This section is borrowed from [[https://gitlab.com/buildfunthings/emacs-config][buildfunthings]]

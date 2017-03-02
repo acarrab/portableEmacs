@@ -13,15 +13,19 @@
  ;; If there is more than one, they won't work right.
  '(ansi-color-names-vector
    ["#0a0814" "#f2241f" "#67b11d" "#b1951d" "#4f97d7" "#a31db1" "#28def0" "#b2b2b2"])
+ '(column-number-mode t)
  '(custom-enabled-themes (quote (suscolors)))
  '(custom-safe-themes
    (quote
     ("b9b1a8d2ec1d5c17700e1a09256f33c2520b26f49980ed9e217e444c381279a9" default)))
+ '(display-battery-mode t)
+ '(display-time-mode t)
  '(inhibit-default-init t)
  '(inhibit-startup-buffer-menu t)
  '(inhibit-startup-screen t)
  '(initial-major-mode (quote org-mode))
  '(initial-scratch-message nil)
+ '(scroll-bar-mode nil)
  '(tool-bar-mode nil))
 
 (custom-set-faces

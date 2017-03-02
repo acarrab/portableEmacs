@@ -8,11 +8,11 @@
 - TODO add company support
 *** Useful functions
 - String Manipulation
-number-to-string
-concat
-substring
+  - number-to-string
+  - concat
+  - substring
 - Printing to buffer
-(message "The name of this buffer is %s." (buffer-name))
+  - (message "The name of this buffer is %s." (buffer-name))
 ** Securing Emacs Environment
 This section is borrowed from [[https://gitlab.com/buildfunthings/emacs-config][buildfunthings]]
 - This installs certifi library for checking the certificate of

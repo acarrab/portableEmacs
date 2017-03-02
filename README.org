@@ -16,7 +16,13 @@ make emacs
 git pull
 make emacs
    #+END_SRC
-   at any time in order to update your repo with mine
+   at any time in order to update your repo with mine.  If you want to
+   keep your local settings, that are generated in the init.el file, you
+   can update only the loader file with...
+   #+BEGIN_SRC bash
+git pull
+make loader
+   #+END_SRC
 * Configuration File
 # <configure start>
 #+STARTUP: indent
@@ -349,4 +355,3 @@ Some settings
   (custom-startup)
 #+END_SRC
 # <configure end>
-

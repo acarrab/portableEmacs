@@ -1,10 +1,15 @@
 EMACS_D = ~/.emacs.d
-FILES =	loader.org \
+LOADER = loader.org
+FILES =	$(LOADER) \
 	init.el
 #------------------------------------------------------------------------------#
 emacs: $(EMACS_D)
 	@$(foreach f, $(FILES), cp $(f) $(EMACS_D)/$(f) ;)
 	@$(foreach f, $(FILES), echo cp $(f) $(EMACS_D)/$(f) ;)
+#------------------------------------------------------------------------------#
+loader:
+	@echo updating loader.org only.
+	cp $(LOADER) $(EMACS_D)/$(LOADER)
 #------------------------------------------------------------------------------#
 $(EMACS_D):
 	mkdir -p $(EMACS_D)

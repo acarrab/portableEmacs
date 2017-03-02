@@ -1,6 +1,7 @@
-# portableEmacs
-* Portable Emacs
-My configuration for emacs. Feel free to use.
+#+TITLE: Portable Emacs
+My configuration for emacs. Feel free to use. This was written with
+[[http://orgmode.org/worg/org-contrib/babel/][org-babel]] so that the init file can be encapsulated in the org mark-up
+language.
 
 ** Installation instructions
    This will erase previous init.el, so please back-up your emacs.d
@@ -368,7 +369,4 @@ Some settings
   (custom-startup)
 #+END_SRC
 # <configure end>
-
-
-
 

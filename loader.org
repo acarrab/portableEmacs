@@ -1,6 +1,7 @@
 #+TITLE: Emacs Configuration
 #+STARTUP: indent
 #+OPTIONS: H:5 num:nil tags:nil timestamps:t
+
 * TODO Add spellcheck
 * TODO Decide what to use for javascript editing
 * TODO add company support

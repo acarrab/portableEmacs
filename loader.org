@@ -135,9 +135,8 @@ side of the buffer window.
   (global-git-gutter-mode +1)
   (setq git-gutter-fr:side 'right-fringe)
 #+END_SRC
-** Commonly used major-modes
-*** Languages
-**** Org Additions
+** Language Related
+*** Org Additions
 This adds the nicer bullets to org mode.
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
@@ -152,7 +151,7 @@ Generic org mode settings for startup
 #+BEGIN_SRC emacs-lisp
   (setq org-log-done 'time)
 #+END_SRC
-**** Python
+*** Python
 #+BEGIN_SRC emacs-lisp
   ;;----------- Python additions ------------
   (use-package anaconda-mode :ensure t)
@@ -165,12 +164,17 @@ Generic org mode settings for startup
   (use-package edit-server :ensure t)
   (use-package jedi :ensure t)
 #+END_SRC
-**** R
+*** R
 This is ess, nie way of interacting with R code
 #+BEGIN_SRC emacs-lisp
   (use-package ess :ensure t)
 #+END_SRC
-**** Computer-graphics - Shaders
+*** cpp
+#+BEGIN_SRC emacs-lisp
+  (setq auto-mode-alist (append '(("\\.h$" . c++-mode))
+                                auto-mode-alist))
+#+END_SRC
+*** Computer-graphics - Shaders
 Adds shader mode package
 #+BEGIN_SRC emacs-lisp
   (use-package shader-mode :ensure t)
@@ -185,7 +189,7 @@ those files.
                                 auto-mode-alist))
 #+END_SRC
 
-**** Website Development
+*** Website Development
 Combines javascript and html editing so that things will be segmented
 properly.
 #+BEGIN_SRC emacs-lisp
@@ -194,6 +198,7 @@ properly.
 ** Spellchecking
 I may you ispell or fly spell, but not quite sure yet
 #+BEGIN_SRC emacs-lisp
+(flyspell-mode)
 #+END_SRC
 ** Fancy stuff
 
@@ -216,7 +221,6 @@ I may you ispell or fly spell, but not quite sure yet
 
 ** Random
 #+BEGIN_SRC emacs-lisp
-  (prefer-coding-system 'utf-8)
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
 #+END_SRC
 Makes sure my favorite theme is installed
@@ -236,8 +240,6 @@ Maybe get rid of bell in emacs 25.1
 (setq ring-bell-function 'my-bell-function)
 (setq visible-bell nil)
 #+END_SRC
-
-
 ** Startup
 I made a customized buffer that is in org-mode and has links. I use it
 to open up to things quickly and see what things I have to do.
@@ -248,51 +250,94 @@ This is where I keep my todo list so, I like to pull it before we open it.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  (defun custom-startup ()
-    "Custom startup file"
-    (interactive)
-    (switch-to-buffer "StArTuP")
-    (StartuP-init)
-    )
+            (defun custom-startup ()
+              "Custom startup file"
+              (interactive)
+              (switch-to-buffer "StArTuP")
+              (StartuP-init)
+              )
 
-  (defvar StartuP-mode-map
-    (let ((map (make-sparse-keymap)))
-      (define-key map "\RET" 'org-open-at-point)
-      (define-key map "\M-m\f"  'org-open-at-point)
-      map)
-    "Keymap for 'StartuP-mode.")
+            (defvar StartuP-mode-map
+              (let ((map (make-sparse-keymap)))
+                (define-key map "\RET" 'org-open-at-point)
+                (define-key map "\M-m\f"  'org-open-at-point)
+                map)
+              "Keymap for 'StartuP-mode.")
 
-  (define-derived-mode StartuP-mode org-mode "StArTuP-mode"
-    "Major mode for startup.
-  \\{StartuP-mode-map})"
-    (setq org-startup-folded t)
-    (setq case-fold-search nil))
+            (define-derived-mode StartuP-mode org-mode "StArTuP-mode"
+              "Major mode for startup.
+                      \\{StartuP-mode-map})"
+              (setq org-startup-folded t)
+              (setq case-fold-search nil))
 
-  (add-hook 'StartuP-mode-hook
-            '(lambda ()
-               (local-set-key (kbd "RET") 'org-open-at-point))
+            (add-hook 'StartuP-mode-hook
+                      '(lambda ()
+                         (local-set-key (kbd "RET") 'org-open-at-point))
+                      )
+
+            (defun StartuP-init ()
+              "What startup does"
+              (StartuP-mode)
+              (read-only-mode)
+              (erase-buffer)
+
+              (StartuP-add-content)
+
+              (org-overview)
+              )
+
+            (defun StartuP-add-content ()
+              (let ((inhibit-read-only t))
+                (insert "* Weather
+        ")
+                (insert  (shell-command-to-string "curl wttr.in/clemson"))
+                (insert-file (expand-file-name "~/Desktop/courses/todo.org"))
+
+                (StartuP-remove-re "\[[0-9 ;]*m")
+                (StartuP-remove-re "*+[ ]*\\([0-9]+[ ]+\\)\\{8\\}\\([0-9:-]+[ ]+\\)\\{3\\}[0-9]+
+*")
+                (StartuP-remove-re "
+.*
+.*Speed")
+
+                (StartuP-remove-re "
+.*
+.*updates")
+
+                ;;(StartuP-replace-re "[ ]*Weather" "Weather")
+                )
+              )
+      (defun StartuP-remove-re (theRegexp)
+        (let ((inhibit-read-only t))
+          (while (re-search-forward theRegexp nil t)
+            (replace-match "")
             )
+          (while (re-search-backward theRegexp nil t)
+            (replace-match "")
+            )
+          )
+        )
+      (defun StartuP-replace-re (theRegexp changeTo)
+        (let ((inhibit-read-only t))
+          (while (re-search-forward theRegexp nil t)
+            (replace-match changeTo)
+            )
+          (while (re-search-backward theRegexp nil t)
+            (replace-match changeTo)
+            )
+          )
+        )
+            (defun add-weather()
+              (interactive)
+              (let ((inhibit-read-only t))
+                (insert  (shell-command-to-string "curl wttr.in/clemson"))
+                ))
 
-  (defun StartuP-init ()
-    "What startup does"
-    (StartuP-mode)
-    (read-only-mode)
-   ;(insertBookmarks)
-    (erase-buffer)
-    (insertAFile "~/Desktop/courses/todo.org")
-    (org-overview)
-     )
+            (defun insertBookmarks ()
+              (let ((inhibit-read-only t))
+                (bookmark-insert bookmark)
+                ))
 
-
-  (defun insertAFile (fileName)
-    (let ((inhibit-read-only t))
-      (insert-file (expand-file-name fileName))
-    ))
-
-  (defun insertBookmarks ()
-    (let ((inhibit-read-only t))
-      (bookmark-insert bookmark)
-    ))
 #+END_SRC
 
 
@@ -308,6 +353,7 @@ This is where I keep my todo list so, I like to pull it before we open it.
 ;;        (push ())
 ;;      ))
 #+END_SRC
+sudo apt-get install weather-util
 
 #+BEGIN_SRC emacs-lisp
   (defun remove-comments ()
@@ -317,8 +363,6 @@ This is where I keep my todo list so, I like to pull it before we open it.
     )
 #+END_SRC
 
-#+RESULTS:
-: remove-comments
 
 
 Some settings
@@ -327,3 +371,4 @@ Some settings
   (setq inhibit-startup-message t)
   (custom-startup)
 #+END_SRC
+*** Set Up Weather

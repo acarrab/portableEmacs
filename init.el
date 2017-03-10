@@ -28,7 +28,7 @@
  '(initial-scratch-message nil)
  '(package-selected-packages
    (quote
-    (ox-gfm ox-twbs forecast which-key web-mode virtualenv use-package try suscolors-theme smex shader-mode rainbow-delimiters powerline org-bullets org-babel-eval-in-repl ob-ipython mode-icons magit jedi ivy-hydra importmagic highlight-parentheses git-gutter-fringe ess ein-mumamo edit-server dired-k counsel babel anaconda-mode)))
+    (org-beautify-theme ox-gfm ox-twbs forecast which-key web-mode virtualenv use-package try suscolors-theme smex shader-mode rainbow-delimiters powerline org-bullets org-babel-eval-in-repl ob-ipython mode-icons magit jedi ivy-hydra importmagic highlight-parentheses git-gutter-fringe ess ein-mumamo edit-server dired-k counsel babel anaconda-mode)))
  '(scroll-bar-mode nil)
  '(tool-bar-mode nil))
 

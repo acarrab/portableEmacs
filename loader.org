@@ -151,6 +151,13 @@ Generic org mode settings for startup
 #+BEGIN_SRC emacs-lisp
   (setq org-log-done 'time)
 #+END_SRC
+Adding in more babel
+#+BEGIN_SRC emacs-lisp
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((python . t)))
+#+END_SRC
+
 *** Python
 #+BEGIN_SRC emacs-lisp
   ;;----------- Python additions ------------
@@ -250,93 +257,94 @@ This is where I keep my todo list so, I like to pull it before we open it.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-            (defun custom-startup ()
-              "Custom startup file"
-              (interactive)
-              (switch-to-buffer "StArTuP")
-              (StartuP-init)
-              )
+              (defun custom-startup ()
+                "Custom startup file"
+                (interactive)
+                (switch-to-buffer "StArTuP")
+                (StartuP-init)
+                )
 
-            (defvar StartuP-mode-map
-              (let ((map (make-sparse-keymap)))
-                (define-key map "\RET" 'org-open-at-point)
-                (define-key map "\M-m\f"  'org-open-at-point)
-                map)
-              "Keymap for 'StartuP-mode.")
+              (defvar StartuP-mode-map
+                (let ((map (make-sparse-keymap)))
+                  (define-key map "\RET" 'org-open-at-point)
+                  (define-key map "\M-m\f"  'org-open-at-point)
+                  map)
+                "Keymap for 'StartuP-mode.")
 
-            (define-derived-mode StartuP-mode org-mode "StArTuP-mode"
-              "Major mode for startup.
-                      \\{StartuP-mode-map})"
-              (setq org-startup-folded t)
-              (setq case-fold-search nil))
+              (define-derived-mode StartuP-mode org-mode "StArTuP-mode"
+                "Major mode for startup.
+                        \\{StartuP-mode-map})"
+                (setq org-startup-folded t)
+                (setq case-fold-search nil))
 
-            (add-hook 'StartuP-mode-hook
-                      '(lambda ()
-                         (local-set-key (kbd "RET") 'org-open-at-point))
-                      )
+              (add-hook 'StartuP-mode-hook
+                        '(lambda ()
+                           (local-set-key (kbd "RET") 'org-open-at-point))
+                        )
 
-            (defun StartuP-init ()
-              "What startup does"
-              (StartuP-mode)
-              (read-only-mode)
-              (erase-buffer)
+              (defun StartuP-init ()
+                "What startup does"
+                (StartuP-mode)
+                (read-only-mode)
+                (erase-buffer)
 
-              (StartuP-add-content)
+                (StartuP-add-content)
 
-              (org-overview)
-              )
+                (org-overview)
+                )
 
-            (defun StartuP-add-content ()
-              (let ((inhibit-read-only t))
-                (insert "* Weather
-        ")
-                (insert  (shell-command-to-string "curl wttr.in/clemson"))
-                (insert-file (expand-file-name "~/Desktop/courses/todo.org"))
+              (defun StartuP-add-content ()
+                (let ((inhibit-read-only t))
+                  (insert "* Weather
+          ")
+                  (insert  (shell-command-to-string "curl wttr.in/clemson"))
+                  (insert-file (expand-file-name "~/Desktop/courses/todo.org"))
 
-                (StartuP-remove-re "\[[0-9 ;]*m")
-                (StartuP-remove-re "*+[ ]*\\([0-9]+[ ]+\\)\\{8\\}\\([0-9:-]+[ ]+\\)\\{3\\}[0-9]+
+                  (StartuP-remove-re "\[[0-9 ;]*m")
+                  (StartuP-remove-re "*+[ ]*\\([0-9]+[ ]+\\)\\{8\\}\\([0-9:-]+[ ]+\\)\\{3\\}[0-9]+
 *")
-                (StartuP-remove-re "
+                  (StartuP-remove-re "
 .*
 .*Speed")
 
-                (StartuP-remove-re "
+                  (StartuP-remove-re "
 .*
 .*updates")
+                  (StartuP-remove-re "\\[0m")
 
-                ;;(StartuP-replace-re "[ ]*Weather" "Weather")
+                  ;;(StartuP-replace-re "[ ]*Weather" "Weather")
+                  )
                 )
+        (defun StartuP-remove-re (theRegexp)
+          (let ((inhibit-read-only t))
+            (while (re-search-forward theRegexp nil t)
+              (replace-match "")
               )
-      (defun StartuP-remove-re (theRegexp)
-        (let ((inhibit-read-only t))
-          (while (re-search-forward theRegexp nil t)
-            (replace-match "")
-            )
-          (while (re-search-backward theRegexp nil t)
-            (replace-match "")
+            (while (re-search-backward theRegexp nil t)
+              (replace-match "")
+              )
             )
           )
-        )
-      (defun StartuP-replace-re (theRegexp changeTo)
-        (let ((inhibit-read-only t))
-          (while (re-search-forward theRegexp nil t)
-            (replace-match changeTo)
-            )
-          (while (re-search-backward theRegexp nil t)
-            (replace-match changeTo)
+        (defun StartuP-replace-re (theRegexp changeTo)
+          (let ((inhibit-read-only t))
+            (while (re-search-forward theRegexp nil t)
+              (replace-match changeTo)
+              )
+            (while (re-search-backward theRegexp nil t)
+              (replace-match changeTo)
+              )
             )
           )
-        )
-            (defun add-weather()
-              (interactive)
-              (let ((inhibit-read-only t))
-                (insert  (shell-command-to-string "curl wttr.in/clemson"))
-                ))
+              (defun add-weather()
+                (interactive)
+                (let ((inhibit-read-only t))
+                  (insert  (shell-command-to-string "curl wttr.in/clemson"))
+                  ))
 
-            (defun insertBookmarks ()
-              (let ((inhibit-read-only t))
-                (bookmark-insert bookmark)
-                ))
+              (defun insertBookmarks ()
+                (let ((inhibit-read-only t))
+                  (bookmark-insert bookmark)
+                  ))
 
 #+END_SRC
 

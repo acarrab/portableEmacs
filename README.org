@@ -378,18 +378,7 @@ This is where I keep my todo list so, I like to pull it before we open it.
 
 [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Regexp-Special.html#Regexp-Special][Documentation for regex]]
 
-
-#+BEGIN_SRC emacs-lisp
-;;  (defun bookmarks-to-org-links ()
-;;    "Get a list of all bookmarks in org format for a link"
-;;    (with-temp-buffer
-;;      (insert-file-contents (expand-file-name "~/.emacs.d/bookmarks"))
-;;      (while (string-match "\"\\(.*\\)\"[.\n]* (filename . \"\\(.*\\)\"" (buffer-string))
-;;        (push ())
-;;      ))
-#+END_SRC
-sudo apt-get install weather-util
-
+*** Regex example
 #+BEGIN_SRC emacs-lisp
   (defun remove-comments ()
     "remove comments for bookmarks"
@@ -398,14 +387,12 @@ sudo apt-get install weather-util
     )
 #+END_SRC
 
-
-
-Some settings
+** Small settings
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-startup-screen t)
   (setq inhibit-startup-message t)
   (custom-startup)
 #+END_SRC
-*** Set Up Weather
 # <configure end>
+
 

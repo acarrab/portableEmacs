@@ -31,7 +31,7 @@ make loader
 *** Todo list
 - Add spellcheck
 - Decide what to use for javascript editing
-- TODO add company support
+- add company support
 *** Useful functions
 - String Manipulation
   - number-to-string
@@ -71,12 +71,16 @@ Adding things to the package repository
   (use-package try :ensure t)
 #+END_SRC
 ** Movement
-I considered searching a part of movement, since it does allow you to
-move around quite nicely.
-
-*** Searching
+*** Window Movement
+Nice way of selecting windows.
+#+BEGIN_SRC emacs-lisp
+  (use-package ace-window :ensure t)
+  (global-set-key (kbd "C-x M-o") 'ace-window)
+  (global-set-key (kbd "C-x O") 'ace-window)
+#+END_SRC
+** Searching
 Gives key suggestions while typing key bindings
-**** which-key
+*** which-key
 #+BEGIN_SRC emacs-lisp
   (use-package which-key
     :ensure t
@@ -84,7 +88,7 @@ Gives key suggestions while typing key bindings
     (which-key-mode))
   ;; Swiper addition with ivy
 #+END_SRC
-**** ivy
+*** ivy
 Finds you things (tm)
 #+BEGIN_SRC emacs-lisp
   (use-package counsel :ensure t)
@@ -139,11 +143,10 @@ C-s C-o
       ))
 #+END_SRC
 
-**** Window Movement
-Nice way of selecting windows.
+** Auto-complete
 #+BEGIN_SRC emacs-lisp
-  (use-package ace-window :ensure t)
-  (global-set-key (kbd "C-x M-o") 'ace-window)
+(use-package company :ensure t)
+(add-hook 'after-init-hook 'global-company-mode)
 #+END_SRC
 ** Git related
 magit is for managing git repos in an easier fashion.
@@ -235,6 +238,25 @@ I may you ispell or fly spell, but not quite sure yet
 (flyspell-mode)
 #+END_SRC
 ** Fancy stuff
+**** Add my theme in
+#+BEGIN_SRC emacs-lisp
+  (use-package suscolors-theme :ensure t)
+#+END_SRC
+This keeps emacs running in the background, so opening a new window
+does not take as long as a fresh start
+#+BEGIN_SRC emacs-lisp
+    (require 'server)
+    (unless (server-running-p)(server-start))
+#+END_SRC
+**** Smart-mode-line
+#+BEGIN_SRC emacs-lisp
+  (use-package smart-mode-line :ensure t)
+  (setq sml/no-comfirm-load-theme t)
+  (setq sml/theme 'respectful)
+  (sml/setup)
+
+#+END_SRC
+
 
 **** highlighting parentheses
 #+BEGIN_SRC emacs-lisp
@@ -253,27 +275,16 @@ I may you ispell or fly spell, but not quite sure yet
   (require 'rainbow-delimiters)
 #+END_SRC
 
+**** Set cols to 80
+#+BEGIN_SRC emacs-lisp
+  (setq fill-column 80)
+#+END_SRC
+
 ** Random
 #+BEGIN_SRC emacs-lisp
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
 #+END_SRC
-Makes sure my favorite theme is installed
-#+BEGIN_SRC emacs-lisp
-  (use-package suscolors-theme :ensure t)
-#+END_SRC
-This keeps emacs running in the background, so opening a new window
-does not take as long as a fresh start
-#+BEGIN_SRC emacs-lisp
-  (require 'server)
-  (unless (server-running-p)(server-start))
-#+END_SRC
 
-Maybe get rid of bell in emacs 25.1
-#+BEGIN_SRC emacs-lisp
-(defun my-bell-function())
-(setq ring-bell-function 'my-bell-function)
-(setq visible-bell nil)
-#+END_SRC
 ** Startup
 I made a customized buffer that is in org-mode and has links. I use it
 to open up to things quickly and see what things I have to do.
@@ -287,7 +298,7 @@ This is where I keep my todo list so, I like to pull it before we open it.
               (defun custom-startup ()
                 "Custom startup file"
                 (interactive)
-                (switch-to-buffer "StArTuP")
+                (switch-to-buffer "StartuP")
                 (StartuP-init)
                 )
 
@@ -298,7 +309,7 @@ This is where I keep my todo list so, I like to pull it before we open it.
                   map)
                 "Keymap for 'StartuP-mode.")
 
-              (define-derived-mode StartuP-mode org-mode "StArTuP-mode"
+              (define-derived-mode StartuP-mode org-mode "StartuP"
                 "Major mode for startup.
                         \\{StartuP-mode-map})"
                 (setq org-startup-folded t)
@@ -388,11 +399,24 @@ This is where I keep my todo list so, I like to pull it before we open it.
 #+END_SRC
 
 ** Small settings
+**** Auto refresh in dired
+#+BEGIN_SRC emacs-lisp
+(setq global-auto-revert-non-file-buffers t)
+(setq auto-revert-verbose nil)
+#+END_SRC
+**** Get rid of default startup
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-startup-screen t)
   (setq inhibit-startup-message t)
   (custom-startup)
 #+END_SRC
+**** Get rid of bell in emacs 25.1
+#+BEGIN_SRC emacs-lisp
+(defun my-bell-function())
+(setq ring-bell-function 'my-bell-function)
+(setq visible-bell nil)
+#+END_SRC
 # <configure end>
+
 
 

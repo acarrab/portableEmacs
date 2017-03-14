@@ -248,14 +248,54 @@ does not take as long as a fresh start
     (require 'server)
     (unless (server-running-p)(server-start))
 #+END_SRC
-**** Smart-mode-line
-#+BEGIN_SRC emacs-lisp
-  (use-package smart-mode-line :ensure t)
-  (setq sml/no-comfirm-load-theme t)
-  (setq sml/theme 'respectful)
-  (sml/setup)
+**** Add other theme Smart-mode-line
 
+
+#+BEGIN_SRC emacs-lisp
+            ; (use-package smart-mode-line
+            ;    :ensure t
+            ;    :init
+            ;    ;;(setq sml/no-comfirm-load-theme t)
+            ;    (setq sml/theme 'dark)
+            ;    :config
+            ;    (sml/setup)
+            ;    ;(add-to-list 'sml/replacer-regexp-list '("^~/Desktop/courses/" ":CRS:") t)
+            ;    (add-to-list 'sml/replacer-regexp-list '("g(.*)home/acarrab/" ":Palmetto:") t)
+            ;    (add-to-list 'sml/replacer-regexp-list  '("^~/Desktop/courses/\\(\\w+\\)/"
+            ;             (lambda (s) (concat ":" (upcase (match-string 1 s)) ":")))
+            ;           t)
+            ;    (add-to-list 'sml/replacer-regexp-list  '("^~/Desktop/\\(\\w+\\)/"
+            ;             (lambda (s) (concat ":" (upcase (match-string 1 s)) ":")))
+            ;           t)
+            ;    (setf rm-blacklist "[\(company\)\(ivy\)\(WK\)]")
+            ;
+            ;    )
 #+END_SRC
+
+**** moe-theme
+#+BEGIN_SRC emacs-lisp
+    (use-package powerline :ensure t)
+    (require 'powerline)
+    (use-package markdown-mode :ensure t)
+    (use-package moe-theme :ensure t)
+
+    ;; Show highlighted buffer-id as decoration. (Default: nil)
+    (setq moe-theme-highlight-buffer-id t)
+
+    ;; Resize titles (optional).
+                                            ;(setq moe-theme-resize-markdown-title '(1.5 1.4 1.3 1.2 1.0 1.0))
+    (setq moe-theme-resize-org-title '(1.2 1.1 1.0 1.0 1.0 1.0 1.0 1.0 1.0))
+    (setq moe-theme-resize-rst-title '(1.5 1.4 1.3 1.2 1.1 1.0))
+    ;; Choose a color for mode-line.(Default: blue)
+    (moe-theme-set-color 'red)
+    ;; Finally, apply moe-theme now.
+    ;; Choose what you like, (moe-light) or (moe-dark)
+  (powerline-moe-theme)
+    (moe-dark)
+#+END_SRC
+
+#+RESULTS:
+
 
 
 **** highlighting parentheses
@@ -417,6 +457,7 @@ This is where I keep my todo list so, I like to pull it before we open it.
 (setq visible-bell nil)
 #+END_SRC
 # <configure end>
+
 
 
 

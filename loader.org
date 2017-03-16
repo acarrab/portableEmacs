@@ -146,16 +146,23 @@ This adds the nicer bullets to org mode.
     :ensure t
     :config
     (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-  (setq org-startup-with-inline-images t)
-  (setq org-src-fontify-natively t)
-  (setq org-src-tab-acts-natively t)
 #+END_SRC
+
+Some random settings
+#+BEGIN_SRC emacs-lisp
+  (setq org-startup-with-inline-images t)
+  (setq org-ellipsis " ⬎");;⚡ ⚡ ⚡")
+#+END_SRC
+
 Generic org mode settings for startup
 #+BEGIN_SRC emacs-lisp
   (setq org-log-done 'time)
 #+END_SRC
+
 Adding in more babel
 #+BEGIN_SRC emacs-lisp
+  (setq org-src-fontify-natively t)
+  (setq org-src-tab-acts-natively t)
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((python . t)))
@@ -179,11 +186,13 @@ This is ess, nie way of interacting with R code
 #+BEGIN_SRC emacs-lisp
   (use-package ess :ensure t)
 #+END_SRC
+
 *** cpp
 #+BEGIN_SRC emacs-lisp
   (setq auto-mode-alist (append '(("\\.h$" . c++-mode))
                                 auto-mode-alist))
 #+END_SRC
+
 *** Computer-graphics - Shaders
 Adds shader mode package
 #+BEGIN_SRC emacs-lisp
@@ -211,7 +220,7 @@ I may you ispell or fly spell, but not quite sure yet
 (flyspell-mode)
 #+END_SRC
 ** Fancy stuff
-**** Add my theme in
+*** Add my theme in
 #+BEGIN_SRC emacs-lisp
   (use-package suscolors-theme :ensure t)
 #+END_SRC
@@ -221,57 +230,72 @@ does not take as long as a fresh start
     (require 'server)
     (unless (server-running-p)(server-start))
 #+END_SRC
-**** Add other theme Smart-mode-line
-
-
+*** Add other theme Smart-mode-line
 #+BEGIN_SRC emacs-lisp
-            ; (use-package smart-mode-line
-            ;    :ensure t
-            ;    :init
-            ;    ;;(setq sml/no-comfirm-load-theme t)
-            ;    (setq sml/theme 'dark)
-            ;    :config
-            ;    (sml/setup)
-            ;    ;(add-to-list 'sml/replacer-regexp-list '("^~/Desktop/courses/" ":CRS:") t)
-            ;    (add-to-list 'sml/replacer-regexp-list '("g(.*)home/acarrab/" ":Palmetto:") t)
-            ;    (add-to-list 'sml/replacer-regexp-list  '("^~/Desktop/courses/\\(\\w+\\)/"
-            ;             (lambda (s) (concat ":" (upcase (match-string 1 s)) ":")))
-            ;           t)
-            ;    (add-to-list 'sml/replacer-regexp-list  '("^~/Desktop/\\(\\w+\\)/"
-            ;             (lambda (s) (concat ":" (upcase (match-string 1 s)) ":")))
-            ;           t)
-            ;    (setf rm-blacklist "[\(company\)\(ivy\)\(WK\)]")
-            ;
-            ;    )
+  (use-package smart-mode-line
+    :ensure t
+    :init
+    ;;(setq sml/no-comfirm-load-theme t)
+    (setq sml/theme 'dark)
+    :config
+    (sml/setup)
+                                          ;(add-to-list 'sml/replacer-regexp-list '("^~/Desktop/courses/" ":CRS:") t)
+    (add-to-list 'sml/replacer-regexp-list '("g(.*)home/acarrab/" ":Palmetto:") t)
+    (add-to-list 'sml/replacer-regexp-list  '("^~/Desktop/courses/\\(\\w+\\)/"
+                                              (lambda (s) (concat ":" (upcase (match-string 1 s)) ":")))
+                 t)
+    (add-to-list 'sml/replacer-regexp-list  '("^~/Desktop/\\(\\w+\\)/"
+                                              (lambda (s) (concat ":" (upcase (match-string 1 s)) ":")))
+                 t)
+    (setf rm-blacklist "[\(company\)\(ivy\)\(WK\)]")
+    )
 #+END_SRC
-
-**** moe-theme
+*** Add org-block coloring
 #+BEGIN_SRC emacs-lisp
-    (use-package powerline :ensure t)
-    (require 'powerline)
-    (use-package markdown-mode :ensure t)
-    (use-package moe-theme :ensure t)
+  (let ((class '((class color) (min-colors 89)))
+        ;; Palette colors.
+        (yellow-1 "#fce94f") (yellow-2 "#ffd700") (yellow-3 "#c4a000") (yellow-3-5 "#aaaa11") (yellow-4 "#875f00")
+        (orange-1 "#ffaf5f") (orange-2 "#ff8700") (orange-3 "#ff5d17") (orange-4 "#d75f00") (orange-5 "#af5f00")
+        (magenta-1 "#ff7bbb") (magenta-2 "#ff4ea3") (magenta-3 "#ff1f8b")
+        (green-1 "#afff00") (green-2 "#a1db00") (green-3 "#5faf00") (green-4 "#008700") (green-5 "#005f00")
+        (cyan-1 "#87ffff") (cyan-2 "#87d7af") (cyan-3 "#00d7af") (cyan-4 "#00ac8a") (cyan-5 "#5faf87") (cyan-6 "#005f5f") (cyan-7 "#236f73")
+        (blue-1 "#5fafd7") (blue-2 "#1f5bff") (blue-3 "#005f87") (blue-4 "#005faf") (blue-5 "#0000af") (blue-6 "#00005f")
+        (purple-1 "#d18aff") (purple-2 "#af5fff") (purple-3 "#9a08ff") (purple-4 "#6c0099")
+        (red-1 "#ef2929")  (red-2 "#dd0000")  (red-3 "#a40000") (red-4 "#5f0000")
+        (white-1 "#c6c6c6") (white-2 "#c6c6c6") (white-3 "#b2b2b2") (black-1 "#a8a8a8") (black-2 "#8a8a8a")
+        (black-2-5 "#6c6c6c") (black-3 "#4e4e4e") (black-4 "#3a3a3a") (black-5 "#303030") (black-6 "#000000")
+        (LIGHT_BG "#fdfde7") (white-0 "#eeeeee")
+        (green-02 "#5fd700") (green-01 "#d7ff00") (green-0 "#d7ff5f") (green-00 "#d7ff87")
+        (cyan-0 "#d7ffd7")
+        (blue-01 "#c3c9f8") (blue-0 "#afd7ff") (blue-00 "#d7d7ff")
+        (yellow-0 "#ffff87") (yellow-00 "#ffffaf")
+        (purple-0 "#af87ff") (purple-00 "#e6a8df")
+        (red-0 "#ff4b4b") (red-00 "#ffafaf")
+        (magenta-0 "#ffafd7") (magenta-00 "#ffd7ff")
+        (orange-0 "#ffaf87") (orange-00 "#ffd787") (orange-000 "#ffd7af")
+        (linum-dark "#87875f") (linum-light "#d7d7af")
+        )
 
-    ;; Show highlighted buffer-id as decoration. (Default: nil)
-    (setq moe-theme-highlight-buffer-id t)
 
-    ;; Resize titles (optional).
-                                            ;(setq moe-theme-resize-markdown-title '(1.5 1.4 1.3 1.2 1.0 1.0))
-    (setq moe-theme-resize-org-title '(1.2 1.1 1.0 1.0 1.0 1.0 1.0 1.0 1.0))
-    (setq moe-theme-resize-rst-title '(1.5 1.4 1.3 1.2 1.1 1.0))
-    ;; Choose a color for mode-line.(Default: blue)
-    (moe-theme-set-color 'red)
-    ;; Finally, apply moe-theme now.
-    ;; Choose what you like, (moe-light) or (moe-dark)
-  (powerline-moe-theme)
-    (moe-dark)
+    (custom-theme-set-faces
+     'suscolors
+
+     ;; org-mode
+     `(org-code ((,class (:foreground ,blue-1 :background ,black-4))))
+     `(org-link ((,class (:foreground ,blue-1 :underline t))))
+
+     `(org-priority ((,class (:foreground ,red-1 :background ,nil))))
+     `(org-block ((,class (:foreground ,blue-1 :background ,black-4))))
+     `(org-block-background ((,class (:foreground nil :background ,black-5))))
+     `(org-block-begin-line ((,class (:foreground ,white-0 :background ,cyan-6))))
+     `(org-block-end-line ((,class (:foreground ,black-3 :background nil))))
+     )
+  )
 #+END_SRC
 
 #+RESULTS:
 
-
-
-**** highlighting parentheses
+*** highlighting parentheses
 #+BEGIN_SRC emacs-lisp
   (use-package highlight-parentheses
     :ensure t
@@ -281,14 +305,14 @@ does not take as long as a fresh start
               (lambda() (highlight-parentheses-mode))))
   (global-highlight-parentheses-mode)
 #+END_SRC
-**** fancy delimiters
+*** fancy delimiters
 #+BEGIN_SRC emacs-lisp
   (use-package rainbow-delimiters    :ensure t )
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
   (require 'rainbow-delimiters)
 #+END_SRC
 
-**** Set cols to 80
+*** Set cols to 80
 #+BEGIN_SRC emacs-lisp
   (setq fill-column 80)
 #+END_SRC
@@ -412,18 +436,18 @@ This is where I keep my todo list so, I like to pull it before we open it.
 #+END_SRC
 
 ** Small settings
-**** Auto refresh in dired
+*** Auto refresh in dired
 #+BEGIN_SRC emacs-lisp
 (setq global-auto-revert-non-file-buffers t)
 (setq auto-revert-verbose nil)
 #+END_SRC
-**** Get rid of default startup
+*** Get rid of default startup
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-startup-screen t)
   (setq inhibit-startup-message t)
   (custom-startup)
 #+END_SRC
-**** Get rid of bell in emacs 25.1
+*** Get rid of bell in emacs 25.1
 #+BEGIN_SRC emacs-lisp
 (defun my-bell-function())
 (setq ring-bell-function 'my-bell-function)

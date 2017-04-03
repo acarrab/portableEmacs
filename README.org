@@ -193,8 +193,17 @@ Adding in more babel
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((python . t)))
+
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((latex . t)))
 #+END_SRC
 
+Some latex within org syntax highlighting
+#+BEGIN_SRC emacs-lisp
+(setq org-highlight-latex-and-related '(latex script entities))
+#+END_SRC
 *** Python
 #+BEGIN_SRC emacs-lisp
   ;;----------- Python additions ------------
@@ -359,64 +368,77 @@ This is where I keep my todo list so, I like to pull it before we open it.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-              (defun custom-startup ()
-                "Custom startup file"
-                (interactive)
-                (switch-to-buffer "StartuP")
-                (StartuP-init)
-                )
+        (defun custom-startup ()
+          "Custom startup file"
+          (interactive)
+          (switch-to-buffer "StartuP")
+          (StartuP-init)
+          )
 
-              (defvar StartuP-mode-map
-                (let ((map (make-sparse-keymap)))
-                  (define-key map "\RET" 'org-open-at-point)
-                  (define-key map "\M-m\f"  'org-open-at-point)
-                  map)
-                "Keymap for 'StartuP-mode.")
+        (defvar StartuP-mode-map
+          (let ((map (make-sparse-keymap)))
+            (define-key map (kbd "RET")  'org-open-at-point)
+            (define-key map (kbd "f")  'org-open-at-point)
+            (define-key map (kbd "t")  'StartuP-open-todo)
+            (define-key map (kbd "g")  'custom-startup)
+            map)
+          "Keymap for 'StartuP-mode.")
 
-              (define-derived-mode StartuP-mode org-mode "StartuP"
-                "Major mode for startup.
-                        \\{StartuP-mode-map})"
-                (setq org-startup-folded t)
-                (setq case-fold-search nil))
+    (defun StartuP-open-todo ()
+      (interactive)
+      "opens todo for editing stuff"
+      (find-file (expand-file-name "~/Desktop/courses/todo.org")))
 
-              (add-hook 'StartuP-mode-hook
-                        '(lambda ()
-                           (local-set-key (kbd "RET") 'org-open-at-point))
-                        )
+        (define-derived-mode StartuP-mode org-mode "StartuP"
+          "Major mode for startup.
+                                \\{StartuP-mode-map})"
+          (setq org-startup-folded t)
+          (setq case-fold-search nil))
 
-              (defun StartuP-init ()
-                "What startup does"
-                (StartuP-mode)
-                (read-only-mode)
-                (erase-buffer)
+        ;;(add-hook 'StartuP-mode-hook
+        ;;          '(lambda ()
+        ;;             (local-set-key (kbd "RET") 'org-open-at-point)
+        ;;             (local-set-key (kbd "g") 'custom-startup))
+        ;;          )
 
-                (StartuP-add-content)
+        (defun StartuP-init ()
+          "What startup does"
+          (StartuP-mode)
+          (read-only-mode)
+          (erase-buffer)
 
-                (org-overview)
-                )
+          (StartuP-add-content)
 
-              (defun StartuP-add-content ()
-                (let ((inhibit-read-only t))
-                  (insert "* Weather
-          ")
-                  (insert  (shell-command-to-string "curl wttr.in/clemson"))
-                  (insert-file (expand-file-name "~/Desktop/courses/todo.org"))
+          (org-overview)
+          )
 
-                  (StartuP-remove-re "\[[0-9 ;]*m")
-                  (StartuP-remove-re "*+[ ]*\\([0-9]+[ ]+\\)\\{8\\}\\([0-9:-]+[ ]+\\)\\{3\\}[0-9]+
-*")
-                  (StartuP-remove-re "
+        (defun StartuP-add-content ()
+          (let ((inhibit-read-only t))
+            (insert "* Weather
+")
+            (insert  (shell-command-to-string "curl wttr.in/clemson"))
+            ;;(insert  (shell-command-to-string "curl wttr.in/bluffton"))
+
+            (StartuP-remove-re "\[[0-9 ;]*m")
+            (StartuP-remove-re "*+[ ]*\\([0-9]+[ ]+\\)\\{8\\}\\([0-9:-]+[ ]+\\)\\{3\\}[0-9]+
+,*")
+            (StartuP-remove-re "
 .*
 .*Speed")
 
-                  (StartuP-remove-re "
+
+
+            (StartuP-remove-re "
 .*
 .*updates")
-                  (StartuP-remove-re "\\[0m")
+            (StartuP-remove-re "\\[0m")
 
-                  ;;(StartuP-replace-re "[ ]*Weather" "Weather")
-                  )
-                )
+            ;;(StartuP-replace-re "[ ]*Weather" "Weather")
+
+            (insert-file (expand-file-name "~/Desktop/courses/todo.org"))
+
+            )
+          )
         (defun StartuP-remove-re (theRegexp)
           (let ((inhibit-read-only t))
             (while (re-search-forward theRegexp nil t)
@@ -437,18 +459,21 @@ This is where I keep my todo list so, I like to pull it before we open it.
               )
             )
           )
-              (defun add-weather()
-                (interactive)
-                (let ((inhibit-read-only t))
-                  (insert  (shell-command-to-string "curl wttr.in/clemson"))
-                  ))
+        (defun add-weather()
+          (interactive)
+          (let ((inhibit-read-only t))
+            (insert  (shell-command-to-string "curl wttr.in/clemson"))
+            ))
 
-              (defun insertBookmarks ()
-                (let ((inhibit-read-only t))
-                  (bookmark-insert bookmark)
-                  ))
+        (defun insertBookmarks ()
+          (let ((inhibit-read-only t))
+            (bookmark-insert bookmark)
+            ))
 
 #+END_SRC
+
+#+RESULTS:
+: insertBookmarks
 
 
 [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Regexp-Special.html#Regexp-Special][Documentation for regex]]
@@ -481,6 +506,7 @@ This is where I keep my todo list so, I like to pull it before we open it.
 (setq visible-bell nil)
 #+END_SRC
 # <configure end>
+
 
 
 

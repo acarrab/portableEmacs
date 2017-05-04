@@ -29,9 +29,9 @@ Adding things to the package repository
 #+BEGIN_SRC emacs-lisp
   (setq package-archives nil)
   ;; Load packages from online
-  (setq package-archives '(("gnu"          . "https://elpa.gnu.org/packages/")
-                           ("melpa"        . "https://melpa.org/packages/")
-                           ("melpa-stable" . "https://stable.melpa.org/packages/")
+  (setq package-archives '(("gnu"          . "http://elpa.gnu.org/packages/")
+                           ("melpa"        . "http://melpa.org/packages/")
+                           ("melpa-stable" . "http://stable.melpa.org/packages/")
                            ("org"       . "http://orgmode.org/elpa/")))
   (package-initialize)
 
@@ -197,6 +197,11 @@ This is ess, nie way of interacting with R code
 #+END_SRC
 
 *** cpp
+Add more compiling functionality
+#+BEGIN_SRC emacs-lisp
+  ;(define-key c++-mode-map (kbd "C-c m") 'compile)
+  (global-set-key (kbd "C-c m") 'compile)
+#+END_SRC
 #+BEGIN_SRC emacs-lisp
   (setq auto-mode-alist (append '(("\\.h$" . c++-mode))
                                 auto-mode-alist))
@@ -402,12 +407,12 @@ This is where I keep my todo list so, I like to pull it before we open it.
 
 
             (StartuP-remove-re "
-.*
 .*updates")
             (StartuP-remove-re "\\[0m")
 
             ;;(StartuP-replace-re "[ ]*Weather" "Weather")
-
+            (insert "
+")
             (insert-file (expand-file-name "~/Desktop/courses/todo.org"))
 
             )

@@ -1,10 +1,6 @@
 #+STARTUP: indent
 #+OPTIONS: H:5 num:nil tags:nil timestamps:t
 ** Notes
-*** Todo list
-- Add spellcheck
-- Decide what to use for javascript editing
-- add company support
 *** Useful functions
 - String Manipulation
   - number-to-string
@@ -120,25 +116,31 @@ C-s C-o
 #+BEGIN_SRC emacs-lisp
 (use-package company :ensure t)
 (add-hook 'after-init-hook 'global-company-mode)
-#+END_SRC
-** Git related
-magit is for managing git repos in an easier fashion.
-#+BEGIN_SRC emacs-lisp
-  (use-package magit :ensure t)
-#+END_SRC
-Adds colors and git info to the dired buffer.
-#+BEGIN_SRC emacs-lisp
-  (use-package dired-k :ensure t)
-#+END_SRC
-Add git markers within files to show what you changed on the right
-side of the buffer window.
-#+BEGIN_SRC emacs-lisp
-  (use-package git-gutter-fringe :ensure t)
-  (require 'git-gutter-fringe)
-  (global-git-gutter-mode +1)
-  (setq git-gutter-fr:side 'right-fringe)
+(setq company-dabbrev-downcase nil)
 #+END_SRC
 ** Language Related
+*** Typescript
+#+BEGIN_SRC emacs-lisp
+  (defun setup-tide-mode ()
+    (interactive)
+    (tide-setup)
+    (flycheck-mode +1)
+    (setq flycheck-check-syntax-automatically '(save mode-enabled))
+    (eldoc-mode +1)
+    (tide-hl-identifier-mode +1)
+    ;; company is an optional dependency. You have to
+    ;; install it separately via package-install
+    ;; `M-x package-install [ret] company`
+    (company-mode +1))
+
+  ;; aligns annotation to the right hand side
+  (setq company-tooltip-align-annotations t)
+
+  ;; formats the buffer before saving
+  (add-hook 'before-save-hook 'tide-format-before-save)
+
+  (add-hook 'typescript-mode-hook #'setup-tide-mode)
+#+END_SRC
 *** Org Additions
 This adds the nicer bullets to org mode.
 #+BEGIN_SRC emacs-lisp
@@ -197,11 +199,6 @@ This is ess, nie way of interacting with R code
 #+END_SRC
 
 *** cpp
-Add more compiling functionality
-#+BEGIN_SRC emacs-lisp
-  ;(define-key c++-mode-map (kbd "C-c m") 'compile)
-  (global-set-key (kbd "C-c m") 'compile)
-#+END_SRC
 #+BEGIN_SRC emacs-lisp
   (setq auto-mode-alist (append '(("\\.h$" . c++-mode))
                                 auto-mode-alist))
@@ -228,15 +225,30 @@ properly.
 #+BEGIN_SRC emacs-lisp
 (use-package web-mode :ensure t)
 #+END_SRC
-** Spellchecking
-I may you ispell or fly spell, but not quite sure yet
-#+BEGIN_SRC emacs-lisp
-(flyspell-mode)
+** LaTeX
+ taking out emacs-lisp tag makes it comment
+#+BEGIN_SRC
+(require 'org-latex)
+(unless (boundp 'org-export-latex-classes)
+  (setq org-export-latex-classes nil))
+(add-to-list 'org-export-latex-classes
+             '("article"
+               "\\documentclass{article}"
+               ("\\section{%s}" . "\\section*{%s}")))
+(add-to-list 'org-export-latex-classes
+             '("article"
+               "\\documentclass{article}"
+               ("\\section{%s}" . "\\section*{%s}")
+               ("\\subsection{%s}" . "\\subsection*{%s}")
+               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+               ("\\paragraph{%s}" . "\\paragraph*{%s}")
+               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 #+END_SRC
 ** Fancy stuff
 *** Add my theme in
 #+BEGIN_SRC emacs-lisp
   (use-package suscolors-theme :ensure t)
+  (use-package gruvbox-theme :ensure t)
 #+END_SRC
 This keeps emacs running in the background, so opening a new window
 does not take as long as a fresh start
@@ -333,125 +345,12 @@ does not take as long as a fresh start
 
 ** Random
 #+BEGIN_SRC emacs-lisp
+  (require 're-builder)
+  (setq reb-re-syntax 'string)
+#+END_SRC
+#+BEGIN_SRC emacs-lisp
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
 #+END_SRC
-
-** Startup
-I made a customized buffer that is in org-mode and has links. I use it
-to open up to things quickly and see what things I have to do.
-
-This is where I keep my todo list so, I like to pull it before we open it.
-#+BEGIN_SRC emacs-lisp
-  (message (shell-command-to-string "cd ~/Desktop/courses/ ; git pull ;"))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-        (defun custom-startup ()
-          "Custom startup file"
-          (interactive)
-          (switch-to-buffer "StartuP")
-          (StartuP-init)
-          )
-
-        (defvar StartuP-mode-map
-          (let ((map (make-sparse-keymap)))
-            (define-key map (kbd "RET")  'org-open-at-point)
-            (define-key map (kbd "f")  'org-open-at-point)
-            (define-key map (kbd "t")  'StartuP-open-todo)
-            (define-key map (kbd "g")  'custom-startup)
-            map)
-          "Keymap for 'StartuP-mode.")
-
-    (defun StartuP-open-todo ()
-      (interactive)
-      "opens todo for editing stuff"
-      (find-file (expand-file-name "~/Desktop/courses/todo.org")))
-
-        (define-derived-mode StartuP-mode org-mode "StartuP"
-          "Major mode for startup.
-                                \\{StartuP-mode-map})"
-          (setq org-startup-folded t)
-          (setq case-fold-search nil))
-
-        ;;(add-hook 'StartuP-mode-hook
-        ;;          '(lambda ()
-        ;;             (local-set-key (kbd "RET") 'org-open-at-point)
-        ;;             (local-set-key (kbd "g") 'custom-startup))
-        ;;          )
-
-        (defun StartuP-init ()
-          "What startup does"
-          (StartuP-mode)
-          (read-only-mode)
-          (erase-buffer)
-
-          (StartuP-add-content)
-
-          (org-overview)
-          )
-
-        (defun StartuP-add-content ()
-          (let ((inhibit-read-only t))
-            (insert "* Weather
-")
-            (insert  (shell-command-to-string "curl wttr.in/clemson"))
-            ;;(insert  (shell-command-to-string "curl wttr.in/bluffton"))
-
-            (StartuP-remove-re "\[[0-9 ;]*m")
-            (StartuP-remove-re "*+[ ]*\\([0-9]+[ ]+\\)\\{8\\}\\([0-9:-]+[ ]+\\)\\{3\\}[0-9]+
-,*")
-            (StartuP-remove-re "
-.*
-.*Speed")
-
-
-
-            (StartuP-remove-re "
-.*updates")
-            (StartuP-remove-re "\\[0m")
-
-            ;;(StartuP-replace-re "[ ]*Weather" "Weather")
-            (insert "
-")
-            (insert-file (expand-file-name "~/Desktop/courses/todo.org"))
-
-            )
-          )
-        (defun StartuP-remove-re (theRegexp)
-          (let ((inhibit-read-only t))
-            (while (re-search-forward theRegexp nil t)
-              (replace-match "")
-              )
-            (while (re-search-backward theRegexp nil t)
-              (replace-match "")
-              )
-            )
-          )
-        (defun StartuP-replace-re (theRegexp changeTo)
-          (let ((inhibit-read-only t))
-            (while (re-search-forward theRegexp nil t)
-              (replace-match changeTo)
-              )
-            (while (re-search-backward theRegexp nil t)
-              (replace-match changeTo)
-              )
-            )
-          )
-        (defun add-weather()
-          (interactive)
-          (let ((inhibit-read-only t))
-            (insert  (shell-command-to-string "curl wttr.in/clemson"))
-            ))
-
-        (defun insertBookmarks ()
-          (let ((inhibit-read-only t))
-            (bookmark-insert bookmark)
-            ))
-
-#+END_SRC
-
-#+RESULTS:
-: insertBookmarks
 
 
 [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Regexp-Special.html#Regexp-Special][Documentation for regex]]
@@ -466,20 +365,42 @@ This is where I keep my todo list so, I like to pull it before we open it.
 #+END_SRC
 
 ** Small settings
-*** Auto refresh in dired
-#+BEGIN_SRC emacs-lisp
-(setq global-auto-revert-non-file-buffers t)
-(setq auto-revert-verbose nil)
-#+END_SRC
 *** Get rid of default startup
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-startup-screen t)
   (setq inhibit-startup-message t)
-  (custom-startup)
 #+END_SRC
 *** Get rid of bell in emacs 25.1
 #+BEGIN_SRC emacs-lisp
 (defun my-bell-function())
 (setq ring-bell-function 'my-bell-function)
 (setq visible-bell nil)
+#+END_SRC
+** Palmetto Cluster Specific
+
+#+BEGIN_SRC emacs-lisp
+  (defun flip()
+    "flips directory to other and opens dired mode"
+    (interactive)
+    (dired
+     (if (eq 0 (string-match "\\(/scratch3/acarrab/\\)" (expand-file-name default-directory)))
+         (replace-regexp-in-string "/scratch3/" "/zfs/safrolab/users/" (expand-file-name default-directory))
+       (replace-regexp-in-string "/zfs/safrolab/users/" "/scratch3/" (expand-file-name default-directory))
+       )
+     ))
+
+  (defun qstat ()
+    "Get my active jobs"
+    (interactive)
+    (message (shell-command-to-string "qstat -u acarrab")))
+
+  (defun whatsfree ()
+    "Get list of  what nodes are free"
+    (interactive)
+    (message (shell-command-to-string "whatsfree")))
+
+                                          ; (defun qsub ()
+                                          ;   "Get my active jobs"
+                                          ;   (interactive)
+                                          ;   (message (shell-command-to-string "whatsfree")))
 #+END_SRC

@@ -338,6 +338,7 @@ properly.
 *** Typescript
 **** Tide
 #+BEGIN_SRC emacs-lisp
+  (use-package flycheck :ensure t)
   (defun setup-tide-mode ()
     (interactive)
     (tide-setup)

@@ -365,6 +365,7 @@ properly.
 *** Typescript
 **** Tide
 #+BEGIN_SRC emacs-lisp
+  (use-package flycheck :ensure t)
   (defun setup-tide-mode ()
     (interactive)
     (tide-setup)
@@ -442,5 +443,6 @@ I don't like how it is working right now, maybe in the future I will check on it
   (global-set-key (kbd "C-x C-a") 'sidebar-buffers-open)
 #+END_SRC
 # <configure end>
+
 
 

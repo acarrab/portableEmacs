@@ -8,8 +8,19 @@
   - substring
 - Printing to buffer
   - (message "The name of this buffer is %s." (buffer-name))
+
+[[https://www.gnu.org/software/emacs/manual/html_node/elisp/Regexp-Special.html#Regexp-Special][Documentation for regex]]
+
+*** Regex example
+#+BEGIN_SRC emacs-lisp
+  (defun remove-comments ()
+    "remove comments for bookmarks"
+    (while (string-match ";+.*\n" current-buffer)
+      (setq current-buffer (replace-match "" t t current-buffer)))
+    )
+#+END_SRC
+
 ** Emacs Package Manager
-*** Setup
 We need to tell emacs where to find packages that we may want to
 download. Without this, it would be difficult to install new
 processes. With the following package we can use the ":ensure t"
@@ -39,7 +50,8 @@ Adding things to the package repository
 
   (use-package try :ensure t)
 #+END_SRC
-** Movement
+** Static
+*** Movement
 *** Window Movement
 Nice way of selecting windows.
 #+BEGIN_SRC emacs-lisp
@@ -47,9 +59,9 @@ Nice way of selecting windows.
   (global-set-key (kbd "C-x M-o") 'ace-window)
   (global-set-key (kbd "C-x O") 'ace-window)
 #+END_SRC
-** Searching
+*** Searching
 Gives key suggestions while typing key bindings
-*** which-key
+**** which-key
 #+BEGIN_SRC emacs-lisp
   (use-package which-key
     :ensure t
@@ -57,7 +69,7 @@ Gives key suggestions while typing key bindings
     (which-key-mode))
   ;; Swiper addition with ivy
 #+END_SRC
-*** ivy
+**** ivy
 Finds you things (tm)
 #+BEGIN_SRC emacs-lisp
   (use-package counsel :ensure t)
@@ -112,140 +124,15 @@ C-s C-o
       ))
 #+END_SRC
 
-** Auto-complete
+*** Auto-complete
 #+BEGIN_SRC emacs-lisp
 (use-package company :ensure t)
 (add-hook 'after-init-hook 'global-company-mode)
 (setq company-dabbrev-downcase nil)
 #+END_SRC
-** Language Related
-*** Typescript
-#+BEGIN_SRC emacs-lisp
-  (defun setup-tide-mode ()
-    (interactive)
-    (tide-setup)
-    (flycheck-mode +1)
-    (setq flycheck-check-syntax-automatically '(save mode-enabled))
-    (eldoc-mode +1)
-    (tide-hl-identifier-mode +1)
-    ;; company is an optional dependency. You have to
-    ;; install it separately via package-install
-    ;; `M-x package-install [ret] company`
-    (company-mode +1))
-
-  ;; aligns annotation to the right hand side
-  (setq company-tooltip-align-annotations t)
-
-  ;; formats the buffer before saving
-  (add-hook 'before-save-hook 'tide-format-before-save)
-
-  (add-hook 'typescript-mode-hook #'setup-tide-mode)
-#+END_SRC
-*** Org Additions
-This adds the nicer bullets to org mode.
-#+BEGIN_SRC emacs-lisp
-  (use-package org-bullets
-    :ensure t
-    :config
-    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-#+END_SRC
-
-Some random settings
-#+BEGIN_SRC emacs-lisp
-  (setq org-startup-with-inline-images t)
-  (setq org-ellipsis " ⬎");;⚡ ⚡ ⚡")
-#+END_SRC
-
-Generic org mode settings for startup
-#+BEGIN_SRC emacs-lisp
-  (setq org-log-done 'time)
-#+END_SRC
-
-Adding in more babel
-#+BEGIN_SRC emacs-lisp
-  (setq org-src-fontify-natively t)
-  (setq org-src-tab-acts-natively t)
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((python . t)))
-
-
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((latex . t)))
-#+END_SRC
-
-Some latex within org syntax highlighting
-#+BEGIN_SRC emacs-lisp
-(setq org-highlight-latex-and-related '(latex script entities))
-#+END_SRC
-*** Python
-#+BEGIN_SRC emacs-lisp
-  ;;----------- Python additions ------------
-  (use-package anaconda-mode :ensure t)
-  ;;----------- IPython! --------------------
-  (use-package ein  :ensure t)
-  ;;------------ Fix python imports with ----
-  (use-package importmagic :ensure t)
-  ;;------------ Setting to ide -------------
-  (use-package virtualenv :ensure t)
-  (use-package edit-server :ensure t)
-  (use-package jedi :ensure t)
-#+END_SRC
-*** R
-This is ess, nie way of interacting with R code
-#+BEGIN_SRC emacs-lisp
-  (use-package ess :ensure t)
-#+END_SRC
-
-*** cpp
-#+BEGIN_SRC emacs-lisp
-  (setq auto-mode-alist (append '(("\\.h$" . c++-mode))
-                                auto-mode-alist))
-#+END_SRC
-
-*** Computer-graphics - Shaders
-Adds shader mode package
-#+BEGIN_SRC emacs-lisp
-  (use-package shader-mode :ensure t)
-#+END_SRC
-We also have to make sure that it starts on specific file extensions,
-so that we don't have to type "M-x shader-mode" every time we open
-those files.
-#+BEGIN_SRC emacs-lisp
-  (setq auto-mode-alist (append '(("\\.vert$" . shader-mode))
-                                auto-mode-alist))
-  (setq auto-mode-alist (append '(("\\.frag$" . shader-mode))
-                                auto-mode-alist))
-#+END_SRC
-
-*** Website Development
-Combines javascript and html editing so that things will be segmented
-properly.
-#+BEGIN_SRC emacs-lisp
-(use-package web-mode :ensure t)
-#+END_SRC
-** LaTeX
- taking out emacs-lisp tag makes it comment
-#+BEGIN_SRC
-(require 'org-latex)
-(unless (boundp 'org-export-latex-classes)
-  (setq org-export-latex-classes nil))
-(add-to-list 'org-export-latex-classes
-             '("article"
-               "\\documentclass{article}"
-               ("\\section{%s}" . "\\section*{%s}")))
-(add-to-list 'org-export-latex-classes
-             '("article"
-               "\\documentclass{article}"
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-               ("\\paragraph{%s}" . "\\paragraph*{%s}")
-               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-#+END_SRC
-** Fancy stuff
-*** Add my theme in
+*** Theme
+**** Add my theme in
+add gruvbox theme on top of suscolors
 #+BEGIN_SRC emacs-lisp
   (use-package suscolors-theme :ensure t)
   (use-package gruvbox-theme :ensure t)
@@ -256,15 +143,9 @@ does not take as long as a fresh start
     (require 'server)
     (unless (server-running-p)(server-start))
 #+END_SRC
-*** Add other theme Smart-mode-line
+**** Add other theme Smart-mode-line
 #+BEGIN_SRC emacs-lisp
-  (use-package smart-mode-line
-    :ensure t
-    :init
-    ;;(setq sml/no-comfirm-load-theme t)
-    (setq sml/theme 'dark)
-    :config
-    (sml/setup)
+  (use-package smart-mode-line :ensure t :init (setq sml/theme 'dark) :config (sml/setup)
                                           ;(add-to-list 'sml/replacer-regexp-list '("^~/Desktop/courses/" ":CRS:") t)
     (add-to-list 'sml/replacer-regexp-list '("g(.*)home/acarrab/" ":Palmetto:") t)
     (add-to-list 'sml/replacer-regexp-list  '("^~/Desktop/courses/\\(\\w+\\)/"
@@ -276,7 +157,8 @@ does not take as long as a fresh start
     (setf rm-blacklist "[\(company\)\(ivy\)\(WK\)]")
     )
 #+END_SRC
-*** Add org-block coloring
+**** Add org-block coloring
+
 #+BEGIN_SRC emacs-lisp
   (let ((class '((class color) (min-colors 89)))
         ;; Palette colors.
@@ -321,7 +203,7 @@ does not take as long as a fresh start
 
 #+RESULTS:
 
-*** highlighting parentheses
+**** highlighting parentheses
 #+BEGIN_SRC emacs-lisp
   (use-package highlight-parentheses
     :ensure t
@@ -331,40 +213,26 @@ does not take as long as a fresh start
               (lambda() (highlight-parentheses-mode))))
   (global-highlight-parentheses-mode)
 #+END_SRC
-*** fancy delimiters
+**** fancy delimiters
 #+BEGIN_SRC emacs-lisp
   (use-package rainbow-delimiters    :ensure t )
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
   (require 'rainbow-delimiters)
 #+END_SRC
 
-*** Set cols to 80
+*** Formatting
+**** Set cols to 80
 #+BEGIN_SRC emacs-lisp
-  (setq fill-column 80)
+   (setq fill-column 80)
 #+END_SRC
 
-** Random
+*** Re-builder
+Make regex builder have the same format as the regex for search and replace
 #+BEGIN_SRC emacs-lisp
   (require 're-builder)
   (setq reb-re-syntax 'string)
 #+END_SRC
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'before-save-hook 'delete-trailing-whitespace)
-#+END_SRC
 
-
-[[https://www.gnu.org/software/emacs/manual/html_node/elisp/Regexp-Special.html#Regexp-Special][Documentation for regex]]
-
-*** Regex example
-#+BEGIN_SRC emacs-lisp
-  (defun remove-comments ()
-    "remove comments for bookmarks"
-    (while (string-match ";+.*\n" current-buffer)
-      (setq current-buffer (replace-match "" t t current-buffer)))
-    )
-#+END_SRC
-
-** Small settings
 *** Get rid of default startup
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-startup-screen t)
@@ -376,7 +244,139 @@ does not take as long as a fresh start
 (setq ring-bell-function 'my-bell-function)
 (setq visible-bell nil)
 #+END_SRC
-** Palmetto Cluster Specific
+*** Trailing whitespace
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+#+END_SRC
+
+*** Languages
+**** Org Additions
+This adds the nicer bullets to org mode.
+#+BEGIN_SRC emacs-lisp
+  (use-package org-bullets
+    :ensure t
+    :config
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+#+END_SRC
+
+Some random settings
+#+BEGIN_SRC emacs-lisp
+  (setq org-startup-with-inline-images t)
+  (setq org-ellipsis " ⬎");;⚡ ⚡ ⚡")
+#+END_SRC
+
+Generic org mode settings for startup
+#+BEGIN_SRC emacs-lisp
+  (setq org-log-done 'time)
+#+END_SRC
+
+Adding in more babel
+#+BEGIN_SRC emacs-lisp
+  (setq org-src-fontify-natively t)
+  (setq org-src-tab-acts-natively t)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((python . t)))
+
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((latex . t)))
+#+END_SRC
+
+Some latex within org syntax highlighting
+#+BEGIN_SRC emacs-lisp
+(setq org-highlight-latex-and-related '(latex script entities))
+#+END_SRC
+**** Python
+#+BEGIN_SRC emacs-lisp
+  ;;----------- Python additions ------------
+  (use-package anaconda-mode :ensure t)
+  ;;----------- IPython! --------------------
+  (use-package ein  :ensure t)
+  ;;------------ Fix python imports with ----
+  (use-package importmagic :ensure t)
+  ;;------------ Setting to ide -------------
+  (use-package virtualenv :ensure t)
+  (use-package edit-server :ensure t)
+  (use-package jedi :ensure t)
+#+END_SRC
+**** R
+This is ess, nie way of interacting with R code
+#+BEGIN_SRC emacs-lisp
+  (use-package ess :ensure t)
+#+END_SRC
+
+**** cpp
+#+BEGIN_SRC emacs-lisp
+  (setq auto-mode-alist (append '(("\\.h$" . c++-mode))
+                                auto-mode-alist))
+#+END_SRC
+
+**** Computer-graphics - Shaders
+Adds shader mode package
+#+BEGIN_SRC emacs-lisp
+  (use-package shader-mode :ensure t)
+#+END_SRC
+We also have to make sure that it starts on specific file extensions,
+so that we don't have to type "M-x shader-mode" every time we open
+those files.
+#+BEGIN_SRC emacs-lisp
+  (setq auto-mode-alist (append '(("\\.vert$" . shader-mode))
+                                auto-mode-alist))
+  (setq auto-mode-alist (append '(("\\.frag$" . shader-mode))
+                                auto-mode-alist))
+#+END_SRC
+
+**** Website Development
+Combines javascript and html editing so that things will be segmented
+properly.
+#+BEGIN_SRC emacs-lisp
+(use-package web-mode :ensure t)
+#+END_SRC
+** Experimental
+*** Typescript
+**** Tide
+#+BEGIN_SRC emacs-lisp
+  (defun setup-tide-mode ()
+    (interactive)
+    (tide-setup)
+    (flycheck-mode +1)
+    (setq flycheck-check-syntax-automatically '(save mode-enabled))
+    (eldoc-mode +1)
+    (tide-hl-identifier-mode +1)
+    ;; company is an optional dependency. You have to
+    ;; install it separately via package-install
+    ;; `M-x package-install [ret] company`
+    (company-mode +1))
+
+  ;; aligns annotation to the right hand side
+  (setq company-tooltip-align-annotations t)
+
+  ;; formats the buffer before saving
+  (add-hook 'before-save-hook 'tide-format-before-save)
+
+  (add-hook 'typescript-mode-hook #'setup-tide-mode)
+#+END_SRC
+**** Tsx
+#+BEGIN_SRC emacs-lisp
+  (require 'web-mode)
+  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
+  (add-hook 'web-mode-hook
+            (lambda ()
+              (when (string-equal "tsx" (file-name-extension buffer-file-name))
+                (setup-tide-mode))))
+(require 'flycheck)
+  ;; enable typescript-tslint checker
+  (flycheck-add-mode 'typescript-tslint 'web-mode)
+#+END_SRC
+**** Format Options
+#+BEGIN_SRC emacs-lisp
+  (setq tide-format-options
+        '(:insertSpaceAfterFunctionKeywordForAnonymousFunctions t :placeOpenBraceOnNewLineForFunctions nil)
+        )
+#+END_SRC
+*** Palmetto Cluster Specific
 
 #+BEGIN_SRC emacs-lisp
   (defun flip()
@@ -403,4 +403,14 @@ does not take as long as a fresh start
                                           ;   "Get my active jobs"
                                           ;   (interactive)
                                           ;   (message (shell-command-to-string "whatsfree")))
+#+END_SRC
+*** Sidebar
+
+I don't like how it is working right now, maybe in the future I will check on it.
+
+#+BEGIN_SRC
+  (add-to-list 'load-path "~/portableEmacs/sidebar/")
+  (require 'sidebar)
+  (global-set-key (kbd "C-x C-f") 'sidebar-open)
+  (global-set-key (kbd "C-x C-a") 'sidebar-buffers-open)
 #+END_SRC

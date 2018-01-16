@@ -202,6 +202,56 @@ does not take as long as a fresh start
 #+END_SRC
 
 #+RESULTS:
+**** Org Additions
+This adds the nicer bullets to org mode.
+#+BEGIN_SRC emacs-lisp
+  (use-package org-bullets
+    :ensure t
+    :config
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+#+END_SRC
+Change bullet types
+#+BEGIN_SRC emacs-lisp
+  (setq org-bullets-face-name (quote org-bullet-face))
+  (setq org-bullets-bullet-list '("◎" "✥" "❂" "✛" "✱" "✻" "⎈" "✛"))
+#+END_SRC
+
+Change ellipsis
+#+BEGIN_SRC emacs-lisp
+  (setq org-startup-with-inline-images t)
+  (setq org-ellipsis " »");;⚡");; ⬎")
+#+END_SRC
+
+Change todo color
+#+BEGIN_SRC emacs-lisp
+(setq org-todo-keyword-faces
+      '(("TODO" . (:foreground "teal" :weight bold)) ("STARTED" . "yellow")
+        ("DONE" . (:foreground "green" :weight bold))))
+#+END_SRC
+
+Generic org mode settings for startup
+#+BEGIN_SRC emacs-lisp
+  (setq org-log-done 'time)
+#+END_SRC
+
+Adding in more babel
+#+BEGIN_SRC emacs-lisp
+  (setq org-src-fontify-natively t)
+  (setq org-src-tab-acts-natively t)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((python . t)))
+
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((latex . t)))
+#+END_SRC
+
+Some latex within org syntax highlighting
+#+BEGIN_SRC emacs-lisp
+(setq org-highlight-latex-and-related '(latex script entities))
+#+END_SRC
 
 **** highlighting parentheses
 #+BEGIN_SRC emacs-lisp
@@ -250,44 +300,6 @@ Make regex builder have the same format as the regex for search and replace
 #+END_SRC
 
 *** Languages
-**** Org Additions
-This adds the nicer bullets to org mode.
-#+BEGIN_SRC emacs-lisp
-  (use-package org-bullets
-    :ensure t
-    :config
-    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-#+END_SRC
-
-Some random settings
-#+BEGIN_SRC emacs-lisp
-  (setq org-startup-with-inline-images t)
-  (setq org-ellipsis " ⬎");;⚡ ⚡ ⚡")
-#+END_SRC
-
-Generic org mode settings for startup
-#+BEGIN_SRC emacs-lisp
-  (setq org-log-done 'time)
-#+END_SRC
-
-Adding in more babel
-#+BEGIN_SRC emacs-lisp
-  (setq org-src-fontify-natively t)
-  (setq org-src-tab-acts-natively t)
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((python . t)))
-
-
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((latex . t)))
-#+END_SRC
-
-Some latex within org syntax highlighting
-#+BEGIN_SRC emacs-lisp
-(setq org-highlight-latex-and-related '(latex script entities))
-#+END_SRC
 **** Python
 #+BEGIN_SRC emacs-lisp
   ;;----------- Python additions ------------
@@ -349,7 +361,9 @@ properly.
     ;; company is an optional dependency. You have to
     ;; install it separately via package-install
     ;; `M-x package-install [ret] company`
-    (company-mode +1))
+    (company-mode +1)
+    (local-set-key (kbd "C-c C-SPC") 'company-tide)
+    )
 
   ;; aligns annotation to the right hand side
   (setq company-tooltip-align-annotations t)
@@ -370,6 +384,11 @@ properly.
 (require 'flycheck)
   ;; enable typescript-tslint checker
   (flycheck-add-mode 'typescript-tslint 'web-mode)
+#+END_SRC
+**** Company Key binding C-c C-SPC
+#+BEGIN_SRC emacs-lisp
+  (eval-after-load "tide-mode"
+    '(define-key tide-mode-map (kbd "C-c C-SPC") 'company-tide))
 #+END_SRC
 **** Format Options
 #+BEGIN_SRC emacs-lisp

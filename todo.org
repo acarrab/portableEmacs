@@ -1,0 +1,32 @@
+* Homework
+** TODO Databases: Email professor group
+   DEADLINE: <2018-01-17 Wed>
+** TODO Combinatorics: Homework
+   DEADLINE: <2018-01-22 Mon>
+* Research
+** TODO Literature review
+   DEADLINE: <2018-01-17 Wed>
+**** Find list of papers comparing abstracts and full-texts
+** TODO Compile results cleanly
+   DEADLINE: <2018-01-24 Wed>
+**** Make the graphs and keep your numeric comparisons too
+**** Find better plotting places
+**** Make cleaner comparisons
+** TODO Title?
+   DEADLINE: <2018-01-31 Wed>
+   Text mining comparison for Literature Based Discovery on 1 million abstracts and full-texts
+** TODO Abstract
+   DEADLINE: <2018-01-31 Wed>
+   Write this last?
+* Additional
+** TODO Email Hannah and ask to be on specific team
+   DEADLINE: <2018-01-19 Fri>
+* College Apps
+** TODO Finish Personal Statement
+   DEADLINE: <2018-01-31 Wed>
+   You can do it! :(
+** TODO Thank professors
+   DEADLINE: <2018-02-01 Thu>
+* DONE
+** DONE English: Write post
+   CLOSED: [2018-01-15 Mon 20:48] DEADLINE: <2018-01-15 Mon>

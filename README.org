@@ -379,6 +379,7 @@ properly.
 **** Tide
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck :ensure t)
+  (use-package tide :ensure t)
   (defun setup-tide-mode ()
     (interactive)
     (tide-setup)
@@ -409,7 +410,10 @@ properly.
             (lambda ()
               (when (string-equal "tsx" (file-name-extension buffer-file-name))
                 (setup-tide-mode))))
-(require 'flycheck)
+  (require 'flycheck)
+  (use-package typescript :ensure t)
+  (use-package typescript-tslint :ensure t)
+
   ;; enable typescript-tslint checker
   (flycheck-add-mode 'typescript-tslint 'web-mode)
 #+END_SRC
@@ -470,5 +474,6 @@ include yasnippets for nice snippets
   (use-package yasnippets-snippets :ensure t)
 #+END_SRC
 # <configure end>
+
 
 

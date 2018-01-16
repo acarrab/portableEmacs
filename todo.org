@@ -1,12 +1,9 @@
 * Homework
-** TODO Databases: Email professor group
-   DEADLINE: <2018-01-17 Wed>
 ** TODO Combinatorics: Homework
    DEADLINE: <2018-01-22 Mon>
 * Research
 ** TODO Literature review
    DEADLINE: <2018-01-17 Wed>
-**** Find list of papers comparing abstracts and full-texts
 ** TODO Compile results cleanly
    DEADLINE: <2018-01-24 Wed>
 **** Make the graphs and keep your numeric comparisons too
@@ -28,5 +25,10 @@
 ** TODO Thank professors
    DEADLINE: <2018-02-01 Thu>
 * DONE
+** DONE Find list of papers comparing abstracts and full-texts
+   CLOSED: [2018-01-15 Mon 22:19] DEADLINE: <2018-01-18 Thu>
+** DONE Databases: Email professor group
+   CLOSED: [2018-01-15 Mon 21:25] DEADLINE: <2018-01-17 Wed>
+
 ** DONE English: Write post
    CLOSED: [2018-01-15 Mon 20:48] DEADLINE: <2018-01-15 Mon>

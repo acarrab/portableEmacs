@@ -1,0 +1,4 @@
+[submodule "yasnippet"]
+	path = yasnippet
+	url = https://github.com/joaotavora/yasnippet
+	branch = master

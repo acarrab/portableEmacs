@@ -434,3 +434,9 @@ I don't like how it is working right now, maybe in the future I will check on it
   (global-set-key (kbd "C-x C-f") 'sidebar-open)
   (global-set-key (kbd "C-x C-a") 'sidebar-buffers-open)
 #+END_SRC
+*** yasnippet
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path "~/portableEmacs/yasnippet")
+  (require 'yasnippet)
+  (yas-global-mode 1)
+#+END_SRC

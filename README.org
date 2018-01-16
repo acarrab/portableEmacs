@@ -63,10 +63,11 @@ Adding things to the package repository
 #+BEGIN_SRC emacs-lisp
   (setq package-archives nil)
   ;; Load packages from online
-  (setq package-archives '(("gnu"          . "http://elpa.gnu.org/packages/")
-                           ("melpa"        . "http://melpa.org/packages/")
-                           ("melpa-stable" . "http://stable.melpa.org/packages/")
-                           ("org"       . "http://orgmode.org/elpa/")))
+  (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                           ("marmalade" . "https://marmalade-repo.org/packages/")
+                           ("melpa" . "https://melpa.org/packages/")
+                           ("org" . "http://orgmode.org/elpa/")))
+
   (package-initialize)
 
   (unless (package-installed-p 'use-package)
@@ -75,7 +76,7 @@ Adding things to the package repository
 
   (require 'use-package)
 
-  (use-package try :ensure t)
+    (use-package try :ensure t)
 #+END_SRC
 ** Static
 *** Movement
@@ -462,10 +463,12 @@ I don't like how it is working right now, maybe in the future I will check on it
   (global-set-key (kbd "C-x C-a") 'sidebar-buffers-open)
 #+END_SRC
 *** yasnippet
+include yasnippets for nice snippets
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path "~/portableEmacs/yasnippet")
-  (require 'yasnippet)
+  (use-package yasnippet :ensure t)
   (yas-global-mode 1)
+  (use-package yasnippets-snippets :ensure t)
 #+END_SRC
 # <configure end>
+
 

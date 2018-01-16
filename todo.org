@@ -29,6 +29,5 @@
    CLOSED: [2018-01-15 Mon 22:19] DEADLINE: <2018-01-18 Thu>
 ** DONE Databases: Email professor group
    CLOSED: [2018-01-15 Mon 21:25] DEADLINE: <2018-01-17 Wed>
-
 ** DONE English: Write post
    CLOSED: [2018-01-15 Mon 20:48] DEADLINE: <2018-01-15 Mon>

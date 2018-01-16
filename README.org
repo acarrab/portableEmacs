@@ -471,7 +471,7 @@ include yasnippets for nice snippets
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet :ensure t)
   (yas-global-mode 1)
-  (use-package yasnippets-snippets :ensure t)
+  (use-package yasnippet-snippets :ensure t)
 #+END_SRC
 *** org-agenda
 #+BEGIN_SRC emacs-lisp
@@ -479,6 +479,7 @@ include yasnippets for nice snippets
 (global-set-key (kbd "C-c a") 'org-agenda)
 #+END_SRC
 # <configure end>
+
 
 
 

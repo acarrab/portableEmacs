@@ -1,12 +1,17 @@
 * Homework
+** TODO Biochem: Read chapter 1
 ** TODO English: Write response paper
    DEADLINE: <2018-01-18 Thu>
 ** TODO English: Post discussion question
    DEADLINE: <2018-01-18 Thu>
 ** TODO English: Print out readings
    DEADLINE: <2018-01-18 Thu>
+** TODO Biochem: Get the book
+   DEADLINE: <2018-01-21 Sun>
 ** TODO Combinatorics: Homework
    DEADLINE: <2018-01-22 Mon>
+** TODO Databases: Run example code again
+   DEADLINE: <2018-01-23 Tue>
 * Research
 ** TODO Literature review
    SCHEDULED: <2018-01-17 Wed> DEADLINE: <2018-01-17 Wed>
@@ -24,6 +29,11 @@
 ** TODO Abstract
    DEADLINE: <2018-01-31 Wed>
    Write this last?
+* WSBF
+** TODO add label for digital only
+   DEADLINE: <2018-01-21 Sun>
+** TODO meet with Michael
+   DEADLINE: <2018-01-19 Fri>
 * Additional
 * College Apps
 ** TODO Thank professors

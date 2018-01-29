@@ -25,7 +25,6 @@ make loader
    #+END_SRC
 * Configuration File
 # <configure start>
-#+STARTUP: indent
 #+OPTIONS: H:5 num:nil tags:nil timestamps:t
 ** Notes
 *** Useful functions
@@ -65,7 +64,7 @@ Adding things to the package repository
   ;; Load packages from online
   (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                            ("marmalade" . "https://marmalade-repo.org/packages/")
-;                           ("melpa" . "https://melpa.org/packages/")
+                           ("melpa" . "https://melpa.org/packages/")
                            ("org" . "http://orgmode.org/elpa/")))
 
   (package-initialize)
@@ -143,13 +142,7 @@ C-s C-o
 #+END_SRC
 #+BEGIN_SRC emacs-lisp
   ;;;;;;;;;;;;;;;;;;;;;;;; AutoComplete  ;;;;;;;;;;;;;;;;;;;;;;;;
-  (use-package auto-complete
-    :ensure t
-    :init
-    (progn
-      (ac-config-default)
-      (global-auto-complete-mode nil)
-      ))
+  (use-package auto-complete :ensure t :init)
 #+END_SRC
 
 *** Auto-complete
@@ -369,10 +362,20 @@ those files.
 #+END_SRC
 
 **** Website Development
-Combines javascript and html editing so that things will be segmented
-properly.
+     Combines javascript and html editing so that things will be segmented properly.
 #+BEGIN_SRC emacs-lisp
 (use-package web-mode :ensure t)
+
+(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+;; others
+(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+
 #+END_SRC
 ** Experimental
 *** Typescript
@@ -429,6 +432,40 @@ properly.
         '(:insertSpaceAfterFunctionKeywordForAnonymousFunctions t :placeOpenBraceOnNewLineForFunctions nil)
         )
 #+END_SRC
+*** FiraCode with ligatures
+#+BEGIN_SRC emacs-lisp
+(when (window-system)
+  (set-default-font "Fira Code"))
+(let ((alist '((33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
+               (35 . ".\\(?:###\\|##\\|_(\\|[#(?[_{]\\)")
+               (36 . ".\\(?:>\\)")
+               (37 . ".\\(?:\\(?:%%\\)\\|%\\)")
+               (38 . ".\\(?:\\(?:&&\\)\\|&\\)")
+               (42 . ".\\(?:\\(?:\\*\\*/\\)\\|\\(?:\\*[*/]\\)\\|[*/>]\\)")
+               (43 . ".\\(?:\\(?:\\+\\+\\)\\|[+>]\\)")
+               (45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
+               (46 . ".\\(?:\\(?:\\.[.<]\\)\\|[.=-]\\)")
+               (47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
+               (48 . ".\\(?:x[a-zA-Z]\\)")
+               (58 . ".\\(?:::\\|[:=]\\)")
+               (59 . ".\\(?:;;\\|;\\)")
+               (60 . ".\\(?:\\(?:!--\\)\\|\\(?:~~\\|->\\|\\$>\\|\\*>\\|\\+>\\|--\\|<[<=-]\\|=[<=>]\\||>\\)\\|[*$+~/<=>|-]\\)")
+               (61 . ".\\(?:\\(?:/=\\|:=\\|<<\\|=[=>]\\|>>\\)\\|[<=>~]\\)")
+               (62 . ".\\(?:\\(?:=>\\|>[=>-]\\)\\|[=>-]\\)")
+               (63 . ".\\(?:\\(\\?\\?\\)\\|[:=?]\\)")
+               (91 . ".\\(?:]\\)")
+               (92 . ".\\(?:\\(?:\\\\\\\\\\)\\|\\\\\\)")
+               (94 . ".\\(?:=\\)")
+               (119 . ".\\(?:ww\\)")
+               (123 . ".\\(?:-\\)")
+               (124 . ".\\(?:\\(?:|[=|]\\)\\|[=>|]\\)")
+               (126 . ".\\(?:~>\\|~~\\|[>=@~-]\\)")
+               )
+             ))
+  (dolist (char-regexp alist)
+    (set-char-table-range composition-function-table (car char-regexp)
+                          `([,(cdr char-regexp) 0 font-shape-gstring]))))
+#+END_SRC
 *** Palmetto Cluster Specific
 
 #+BEGIN_SRC emacs-lisp
@@ -479,17 +516,38 @@ include yasnippets for nice snippets
 (setq org-agenda-files '("~/portableEmacs/agenda/"))
 (global-set-key (kbd "C-c a") 'org-agenda)
 #+END_SRC
-*** magit
-#+BEGIN_SRC emacs-lisp
-(use-package magit :ensure t)
-#+END_SRC
 *** git-gutter
 #+BEGIN_SRC emacs-lisp
-  (use-package git-gutter :ensure t)
-  (use-package git-gutter+ :ensure t)
+  (use-package git-gutter-fringe :ensure t)
+  (require 'git-gutter-fringe)
+
+  (setq-default left-fringe-width 20)
+  (setq-default right-fringe-width 20)
   (global-git-gutter-mode +1)
+
+
+#+END_SRC
+
+*** moving autosave directory to .emacs.d/saves
+#+BEGIN_SRC emacs-lisp
+  (setq backup-directory-alist
+        `(("." . ,(expand-file-name (concat user-emacs-directory "backups")))))
+  (setq auto-save-file-name-transforms
+        `((".*" ,(expand-file-name (concat user-emacs-directory "autosaves")) t)))
+
+#+END_SRC
+*** removing file locks
+#+BEGIN_SRC emacs-lisp
+  (setq create-lockfiles nil)
+#+END_SRC
+
+
+***
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'find-file-hook 'linum-mode)
 #+END_SRC
 # <configure end>
+
 
 
 

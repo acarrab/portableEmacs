@@ -78,7 +78,6 @@ Adding things to the package repository
     (use-package try :ensure t)
 #+END_SRC
 ** Static
-*** Movement
 *** Window Movement
 Nice way of selecting windows.
 #+BEGIN_SRC emacs-lisp
@@ -97,7 +96,7 @@ Gives key suggestions while typing key bindings
   ;; Swiper addition with ivy
 #+END_SRC
 **** ivy
-Finds you things (tm)
+Finds you things
 #+BEGIN_SRC emacs-lisp
   (use-package counsel :ensure t)
   (global-set-key (kbd "M-y") 'counsel-yank-pop)
@@ -147,9 +146,9 @@ C-s C-o
 
 *** Auto-complete
 #+BEGIN_SRC emacs-lisp
-(use-package company :ensure t)
-(add-hook 'after-init-hook 'global-company-mode)
-(setq company-dabbrev-downcase nil)
+  (use-package company :ensure t)
+  (add-hook 'after-init-hook 'global-company-mode)
+  (setq company-dabbrev-downcase nil)
 #+END_SRC
 *** Theme
 **** Add my theme in
@@ -334,33 +333,11 @@ Make regex builder have the same format as the regex for search and replace
   (use-package edit-server :ensure t)
   (use-package jedi :ensure t)
 #+END_SRC
-**** R
-This is ess, nie way of interacting with R code
-#+BEGIN_SRC emacs-lisp
-  (use-package ess :ensure t)
-#+END_SRC
-
 **** cpp
 #+BEGIN_SRC emacs-lisp
   (setq auto-mode-alist (append '(("\\.h$" . c++-mode))
                                 auto-mode-alist))
 #+END_SRC
-
-**** Computer-graphics - Shaders
-Adds shader mode package
-#+BEGIN_SRC emacs-lisp
-  (use-package shader-mode :ensure t)
-#+END_SRC
-We also have to make sure that it starts on specific file extensions,
-so that we don't have to type "M-x shader-mode" every time we open
-those files.
-#+BEGIN_SRC emacs-lisp
-  (setq auto-mode-alist (append '(("\\.vert$" . shader-mode))
-                                auto-mode-alist))
-  (setq auto-mode-alist (append '(("\\.frag$" . shader-mode))
-                                auto-mode-alist))
-#+END_SRC
-
 **** Website Development
      Combines javascript and html editing so that things will be segmented properly.
 #+BEGIN_SRC emacs-lisp
@@ -381,7 +358,7 @@ those files.
 *** Typescript
 **** Tide
 #+BEGIN_SRC emacs-lisp
-  (use-package flycheck :ensure t)
+  ;;(use-package flycheck :ensure t)
   (use-package tide :ensure t)
   (use-package typescript :ensure t)
   (defun setup-tide-mode ()
@@ -433,6 +410,12 @@ those files.
         )
 #+END_SRC
 *** FiraCode with ligatures
+
+This has been a disappointment, it crashes at so many points with so
+many different features within emacs. When something crashes, it is
+probably in-part because of this...
+
+
 #+BEGIN_SRC emacs-lisp
 (when (window-system)
   (set-default-font "Fira Code"))
@@ -442,10 +425,10 @@ those files.
                (37 . ".\\(?:\\(?:%%\\)\\|%\\)")
                (38 . ".\\(?:\\(?:&&\\)\\|&\\)")
                (42 . ".\\(?:\\(?:\\*\\*/\\)\\|\\(?:\\*[*/]\\)\\|[*/>]\\)")
-               (43 . ".\\(?:\\(?:\\+\\+\\)\\|[+>]\\)")
-               (45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
-               (46 . ".\\(?:\\(?:\\.[.<]\\)\\|[.=-]\\)")
-               (47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
+;; crashes cpp mode: (43 . ".\\(?:\\(?:\\+\\+\\)\\|[+>]\\)")
+;; crashes eshell:   (45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
+;; hasn't crashed yet, reported to crash with helm integration:  (46 . ".\\(?:\\(?:\\.[.<]\\)\\|[.=-]\\)")
+;; crashes cpp mode: (47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
                (48 . ".\\(?:x[a-zA-Z]\\)")
                (58 . ".\\(?:::\\|[:=]\\)")
                (59 . ".\\(?:;;\\|;\\)")
@@ -494,16 +477,6 @@ those files.
                                           ;   (interactive)
                                           ;   (message (shell-command-to-string "whatsfree")))
 #+END_SRC
-*** Sidebar
-
-I don't like how it is working right now, maybe in the future I will check on it.
-
-#+BEGIN_SRC
-  (add-to-list 'load-path "~/portableEmacs/sidebar/")
-  (require 'sidebar)
-  (global-set-key (kbd "C-x C-f") 'sidebar-open)
-  (global-set-key (kbd "C-x C-a") 'sidebar-buffers-open)
-#+END_SRC
 *** yasnippet
 include yasnippets for nice snippets
 #+BEGIN_SRC emacs-lisp
@@ -536,17 +509,21 @@ include yasnippets for nice snippets
         `((".*" ,(expand-file-name (concat user-emacs-directory "autosaves")) t)))
 
 #+END_SRC
-*** removing file locks
-#+BEGIN_SRC emacs-lisp
-  (setq create-lockfiles nil)
-#+END_SRC
 
-
-***
+*** enable line number mode
 #+BEGIN_SRC emacs-lisp
   (add-hook 'find-file-hook 'linum-mode)
 #+END_SRC
+*** Change default shell to zsh
+#+BEGIN_SRC emacs-lisp
+  (setq-default explicit-shell-file-name "/bin/zsh")
+  (setq-default shell-file-name "/bin/zsh")
+  (setq multi-term-program "/bin/zsh")
+
+#+END_SRC
 # <configure end>
+
+
 
 
 

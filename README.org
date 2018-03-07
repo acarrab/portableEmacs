@@ -64,7 +64,6 @@ Adding things to the package repository
   ;; Load packages from online
   (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                            ("marmalade" . "https://marmalade-repo.org/packages/")
-                           ("melpa" . "https://melpa.org/packages/")
                            ("org" . "http://orgmode.org/elpa/")))
 
   (package-initialize)
@@ -82,8 +81,6 @@ Adding things to the package repository
 Nice way of selecting windows.
 #+BEGIN_SRC emacs-lisp
   (use-package ace-window :ensure t)
-  (global-set-key (kbd "C-x M-o") 'ace-window)
-  (global-set-key (kbd "C-x O") 'ace-window)
 #+END_SRC
 *** Searching
 Gives key suggestions while typing key bindings
@@ -346,6 +343,7 @@ Make regex builder have the same format as the regex for search and replace
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 ;; others
 (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.php\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
@@ -354,6 +352,33 @@ Make regex builder have the same format as the regex for search and replace
 (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
 
 #+END_SRC
+***** Laravel Specific
+#+BEGIN_SRC emacs-lisp
+(use-package php-mode :ensure t)
+(add-to-list 'auto-mode-alist '("\\artisan\\'" . php-mode))
+
+#+END_SRC
+
+** User Keybindings
+   #+BEGIN_SRC emacs-lisp
+
+     (defun jump-and-resize ()
+       "resize window you jump to so that it is wider than others"
+       (interactive)
+       (ace-window)
+
+       )
+
+     (defun halve-other-window-height ()
+       "Expand current window to use half of the other window's lines."
+       (interactive)
+       (enlarge-window (/ (window-height (next-window)) 2)))
+
+
+     (global-set-key (kbd "C-c j") 'ace-window)
+
+   #+END_SRC
+
 ** Experimental
 *** Typescript
 **** Tide
@@ -372,8 +397,10 @@ Make regex builder have the same format as the regex for search and replace
     ;; install it separately via package-install
     ;; `M-x package-install [ret] company`
     (company-mode +1)
-    (local-set-key (kbd "C-c C-SPC") 'company-tide)
+
     )
+
+
 
   ;; aligns annotation to the right hand side
   (setq company-tooltip-align-annotations t)
@@ -409,6 +436,17 @@ Make regex builder have the same format as the regex for search and replace
         '(:insertSpaceAfterFunctionKeywordForAnonymousFunctions t :placeOpenBraceOnNewLineForFunctions nil)
         )
 #+END_SRC
+**** Keybindings
+#+BEGIN_SRC emacs-lisp
+  (defun my-tide-config ()
+    "add keybindings that activate when using tide-mode"
+    (local-set-key (kbd "C-c C-SPC") 'company-tide)
+  )
+  (add-hook 'tide-mode-hook 'my-tide-config)
+
+
+#+END_SRC
+
 *** FiraCode with ligatures
 
 This has been a disappointment, it crashes at so many points with so
@@ -514,14 +552,101 @@ include yasnippets for nice snippets
 #+BEGIN_SRC emacs-lisp
   (add-hook 'find-file-hook 'linum-mode)
 #+END_SRC
-*** Change default shell to zsh
+
+
+
+
+
+*** Treemacs
 #+BEGIN_SRC emacs-lisp
-  (setq-default explicit-shell-file-name "/bin/zsh")
-  (setq-default shell-file-name "/bin/zsh")
-  (setq multi-term-program "/bin/zsh")
+(use-package treemacs :ensure t)
+(global-set-key (kbd "C-c l") 'treemacs)
+#+END_SRC
+*** Multi-term
+#+BEGIN_SRC emacs-lisp
+    ;;(setq-default explicit-shell-file-name "/bin/zsh")
+    ;;(setq-default shell-file-name "/bin/zsh")
+    ;; some other multi-term line was here...
+    (setenv "SHELL" "/bin/zsh")
+    (setq explicit-shell-file-name "/bin/zsh")
+
+
+    (use-package multi-term :ensure t)
+    (defun run-term ()
+      (interactive)
+      (command-execute 'multi-term)
+      (setq-default truncate-lines nil)
+      )
+
+
+
+    (global-set-key (kbd "C-c t") 'run-term)
+
+
+
+
 
 #+END_SRC
+
+*** Shortcut for toggling filelock
+
+#+BEGIN_SRC emacs-lisp
+  ;;(setq create-lockfiles nil)
+#+END_SRC
+*** Fix inaccessible functions on Mac-osx platform
+This seems to fix the problem!
+#+BEGIN_SRC emacs-lisp
+(use-package exec-path-from-shell :ensure t)
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
+
+
+#+END_SRC
+
+*** Adds ability to expand window in group
+    I wrote this code to expand the current buffers window so that you can see more of the code if needed
+#+BEGIN_SRC emacs-lisp
+    (setq window-shrink-columns 20)
+    (setq window-shrink-rows 10)
+
+    (defun focus-shrink-all-other-windows ()
+      "expands window in current group"
+      (interactive)
+
+
+      (defun go-to-windows (win nxt)
+        "returns a string with all window widths in current row"
+        (if (not (eq win nil))
+            (progn
+              (funcall
+               (lambda (win)
+                 (if (window-combined-p)
+                     (progn
+                       (window-resize win (window-resizable win -10000))
+                       (window-resize win (window-resizable win window-shrink-rows))
+                       )
+                   (progn
+                     (window-resize win (window-resizable win -10000 t) t)
+                     (window-resize win (window-resizable win window-shrink-columns t) t)
+                     )
+                   )
+                 )
+               win
+               )
+              (go-to-windows (funcall nxt win) nxt)
+              )
+          )
+        )
+
+
+      (go-to-windows (window-prev-sibling (get-buffer-window)) (lambda (x) (window-prev-sibling x)))
+      (go-to-windows (window-next-sibling (get-buffer-window)) (lambda (x) (window-next-sibling x)))
+      )
+
+     (global-set-key (kbd "C-c f") 'focus-shrink-all-other-windows)
+#+END_SRC
 # <configure end>
+
 
 
 

@@ -18,7 +18,7 @@
  '(org-fontify-whole-heading-line t)
  '(package-selected-packages
    (quote
-    (multi-term git-gutter-fringe doom-themes js-doc typescript yasnippet-snippets typescript-tslint yasnippet yasnippets-snippets json-mode sr-speedbar jsx-mode markdown-mode+ gruvbox-theme zenburn-theme neotree nav dired-subtree treemacs dired-sidebar vlf ein bison-mode tide js3-mode git-timemachine yoshi-theme which-key web-mode virtualenv use-package tuareg try suscolors-theme smex smart-mode-line-powerline-theme shader-mode rainbow-delimiters ox-twbs ox-gfm org-bullets org-beautify-theme org-babel-eval-in-repl ob-ipython moe-theme mode-icons markdown-mode magit jedi ivy-hydra importmagic highlight-parentheses forecast ess ein-mumamo edit-server dired-k counsel company colonoscopy-theme babel anaconda-mode)))
+    (exec-path-from-shell php-mode multi-term git-gutter-fringe doom-themes js-doc typescript yasnippet-snippets typescript-tslint yasnippet yasnippets-snippets json-mode sr-speedbar jsx-mode markdown-mode+ gruvbox-theme zenburn-theme neotree nav dired-subtree treemacs dired-sidebar vlf ein bison-mode tide js3-mode git-timemachine yoshi-theme which-key web-mode virtualenv use-package tuareg try suscolors-theme smex smart-mode-line-powerline-theme shader-mode rainbow-delimiters ox-twbs ox-gfm org-bullets org-beautify-theme org-babel-eval-in-repl ob-ipython moe-theme mode-icons markdown-mode magit jedi ivy-hydra importmagic highlight-parentheses forecast ess ein-mumamo edit-server dired-k counsel company colonoscopy-theme babel anaconda-mode)))
  '(scroll-bar-mode nil)
  '(standard-indent 2)
  '(tool-bar-mode nil)
@@ -62,4 +62,7 @@
 (require 'ob-tangle)
 (setq init-dir (file-name-directory (or load-file-name (buffer-file-name))))
 (org-babel-load-file (expand-file-name "loader.org" init-dir))
+
+;; for user defiend additions to emacs
+(org-babel-load-file (expand-file-name "user.org" init-dir))
 ;; Added by Emacs

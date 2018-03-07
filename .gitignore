@@ -1,8 +1,2 @@
-*
-agenda/*
-!agenda
-!genReadme.py
-!static.org
-!experimental.org
 !init.el
-!README.md
+*.el

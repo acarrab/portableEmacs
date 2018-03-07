@@ -11,7 +11,7 @@
    exist.
 
    #+BEGIN_SRC emacs-lisp
-  (require 'package)
+     (require 'package)
    #+END_SRC
 
    Adding things to the package repository
@@ -34,7 +34,7 @@
     (use-package try :ensure t)
    #+END_SRC
 *** Window Movement
-Nice way of selecting windows.
+    Nice way of selecting windows.
 #+BEGIN_SRC emacs-lisp
   (use-package ace-window :ensure t)
 #+END_SRC
@@ -243,12 +243,6 @@ Some latex within org syntax highlighting
   (require 'rainbow-delimiters)
 #+END_SRC
 
-*** Formatting
-**** Set cols to 80
-#+BEGIN_SRC emacs-lisp
-   (setq fill-column 80)
-#+END_SRC
-
 *** Re-builder
 Make regex builder have the same format as the regex for search and replace
 #+BEGIN_SRC emacs-lisp
@@ -256,16 +250,16 @@ Make regex builder have the same format as the regex for search and replace
   (setq reb-re-syntax 'string)
 #+END_SRC
 
-*** Get rid of default startup
+*** Startup
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-startup-screen t)
   (setq inhibit-startup-message t)
 #+END_SRC
-*** Get rid of bell in emacs 25.1
+*** Get rid of bell in emacs 25
 #+BEGIN_SRC emacs-lisp
-(defun my-bell-function())
-(setq ring-bell-function 'my-bell-function)
-(setq visible-bell nil)
+  (defun my-bell-function())
+  (setq ring-bell-function 'my-bell-function)
+  (setq visible-bell nil)
 #+END_SRC
 *** Trailing whitespace
 #+BEGIN_SRC emacs-lisp
@@ -314,7 +308,6 @@ Make regex builder have the same format as the regex for search and replace
 (add-to-list 'auto-mode-alist '("\\artisan\\'" . php-mode))
 
 #+END_SRC
-
 
 
 ** User Keybindings

@@ -55,15 +55,14 @@
 (put 'downcase-region 'disabled nil)
 
 
-
-
 (package-initialize)
 (require 'org)
 (require 'ob-tangle)
-(setq init-dir (file-name-directory (or load-file-name (buffer-file-name))))
-(org-babel-load-file (expand-file-name "static.org" init-dir))
-(org-babel-load-file (expand-file-name "experimental.org" init-dir))
+(setq portable-emacs-dir (file-name-directory (or load-file-name (buffer-file-name))))
 
-;; for user defiend additions to emacs
-(org-babel-load-file (expand-file-name "user.org" init-dir))
-;; Added by Emacs
+(org-babel-load-file (expand-file-name "static.org" portable-emacs-dir))
+
+(setq yas-snippet-dirs (expand-file-name "yasnippet" portable-emacs-dir))
+
+
+(org-babel-load-file (expand-file-name "experimental.org" portable-emacs-dir))

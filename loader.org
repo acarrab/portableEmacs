@@ -497,21 +497,9 @@ include yasnippets for nice snippets
 #+END_SRC
 *** org-agenda
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-files '("~/portableEmacs/agenda/"))
+(setq org-agenda-files '("~/.emacs.d/agenda/"))
 (global-set-key (kbd "C-c a") 'org-agenda)
 #+END_SRC
-*** git-gutter
-#+BEGIN_SRC emacs-lisp
-  (use-package git-gutter-fringe :ensure t)
-  (require 'git-gutter-fringe)
-
-  (setq-default left-fringe-width 20)
-  (setq-default right-fringe-width 20)
-  (global-git-gutter-mode +1)
-
-
-#+END_SRC
-
 *** moving autosave directory to .emacs.d/saves
 #+BEGIN_SRC emacs-lisp
   (setq backup-directory-alist
@@ -617,4 +605,17 @@ This seems to fix the problem!
       )
 
      (global-set-key (kbd "C-c f") 'focus-shrink-all-other-windows)
+#+END_SRC
+*** git-gutter
+#+BEGIN_SRC emacs-lisp
+  (use-package git-gutter-fringe :ensure t)
+  (require 'git-gutter-fringe)
+
+  (setq-default left-fringe-width 20)
+  (setq-default right-fringe-width 20)
+
+
+  (global-git-gutter-mode +1)
+
+
 #+END_SRC

@@ -1,1 +1,7 @@
+*
 agenda/*
+!agenda
+!genReadme.py
+!loader.org
+!init.el
+!README.md

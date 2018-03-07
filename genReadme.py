@@ -1,4 +1,4 @@
-loader = open('./loader.org', 'r').read()
+loader = '\n'.join([open('./static.org', 'r').read(), open('./experimental.org', 'r').read()])
 ReadMe = open('./README.org', 'r').read()
 
 startTag = '# <configure start>'

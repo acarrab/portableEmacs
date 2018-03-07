@@ -62,7 +62,9 @@
 
 (org-babel-load-file (expand-file-name "static.org" portable-emacs-dir))
 
-(setq yas-snippet-dirs (expand-file-name "yasnippet" portable-emacs-dir))
+ ;; load yasnippet directory
+(setq yas-files (expand-file-name "yasnippet" portable-emacs-dir))
+(setq yas-snippet-dirs '(yas-files))
 
 
 (org-babel-load-file (expand-file-name "experimental.org" portable-emacs-dir))

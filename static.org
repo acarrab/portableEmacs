@@ -243,11 +243,22 @@ Some latex within org syntax highlighting
   (require 'rainbow-delimiters)
 #+END_SRC
 
+**** enable line number mode
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'find-file-hook 'linum-mode)
+#+END_SRC
+
 *** Re-builder
 Make regex builder have the same format as the regex for search and replace
 #+BEGIN_SRC emacs-lisp
   (require 're-builder)
   (setq reb-re-syntax 'string)
+#+END_SRC
+
+*** Treemacs
+#+BEGIN_SRC emacs-lisp
+(use-package treemacs :ensure t)
+(global-set-key (kbd "C-c l") 'treemacs)
 #+END_SRC
 
 *** Startup
@@ -309,16 +320,11 @@ Make regex builder have the same format as the regex for search and replace
 
 #+END_SRC
 
+*** yasnippet
+include yasnippets for nice snippets
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet :ensure t)
+  (yas-global-mode 1)
+  (use-package yasnippet-snippets :ensure t)
 
-** User Keybindings
-   #+BEGIN_SRC emacs-lisp
-
-     (defun halve-other-window-height ()
-       "Expand current window to use half of the other window's lines."
-       (interactive)
-       (enlarge-window (/ (window-height (next-window)) 2)))
-
-
-     (global-set-key (kbd "C-c j") 'ace-window)
-
-   #+END_SRC
+#+END_SRC

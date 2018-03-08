@@ -1,6 +1,15 @@
 #+OPTIONS: H:5 num:nil tags:nil timestamps:t
 ** Experimental
    This file contains properties that may often change, which would cause recompilation
+*** Fix inaccessible functions on Mac-osx platform
+This seems to fix the problem!
+#+BEGIN_SRC emacs-lisp
+(use-package exec-path-from-shell :ensure t)
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
+
+
+#+END_SRC
 *** Typescript
 **** Tide
 #+BEGIN_SRC emacs-lisp
@@ -68,46 +77,6 @@
 
 #+END_SRC
 
-*** FiraCode with ligatures
-
-This has been a disappointment, it crashes at so many points with so
-many different features within emacs. When something crashes, it is
-probably in-part because of this...
-
-
-#+BEGIN_SRC emacs-lisp
-(when (window-system)
-  (set-default-font "Fira Code"))
-(let ((alist '((33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
-               (35 . ".\\(?:###\\|##\\|_(\\|[#(?[_{]\\)")
-               (36 . ".\\(?:>\\)")
-               (37 . ".\\(?:\\(?:%%\\)\\|%\\)")
-               (38 . ".\\(?:\\(?:&&\\)\\|&\\)")
-               (42 . ".\\(?:\\(?:\\*\\*/\\)\\|\\(?:\\*[*/]\\)\\|[*/>]\\)")
-;; crashes cpp mode: (43 . ".\\(?:\\(?:\\+\\+\\)\\|[+>]\\)")
-;; crashes eshell:   (45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
-;; hasn't crashed yet, reported to crash with helm integration:  (46 . ".\\(?:\\(?:\\.[.<]\\)\\|[.=-]\\)")
-;; crashes cpp mode: (47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
-               (48 . ".\\(?:x[a-zA-Z]\\)")
-               (58 . ".\\(?:::\\|[:=]\\)")
-               (59 . ".\\(?:;;\\|;\\)")
-               (60 . ".\\(?:\\(?:!--\\)\\|\\(?:~~\\|->\\|\\$>\\|\\*>\\|\\+>\\|--\\|<[<=-]\\|=[<=>]\\||>\\)\\|[*$+~/<=>|-]\\)")
-               (61 . ".\\(?:\\(?:/=\\|:=\\|<<\\|=[=>]\\|>>\\)\\|[<=>~]\\)")
-               (62 . ".\\(?:\\(?:=>\\|>[=>-]\\)\\|[=>-]\\)")
-               (63 . ".\\(?:\\(\\?\\?\\)\\|[:=?]\\)")
-               (91 . ".\\(?:]\\)")
-               (92 . ".\\(?:\\(?:\\\\\\\\\\)\\|\\\\\\)")
-               (94 . ".\\(?:=\\)")
-               (119 . ".\\(?:ww\\)")
-               (123 . ".\\(?:-\\)")
-               (124 . ".\\(?:\\(?:|[=|]\\)\\|[=>|]\\)")
-               (126 . ".\\(?:~>\\|~~\\|[>=@~-]\\)")
-               )
-             ))
-  (dolist (char-regexp alist)
-    (set-char-table-range composition-function-table (car char-regexp)
-                          `([,(cdr char-regexp) 0 font-shape-gstring]))))
-#+END_SRC
 *** Palmetto Cluster Specific
 
 #+BEGIN_SRC emacs-lisp
@@ -136,14 +105,6 @@ probably in-part because of this...
                                           ;   (interactive)
                                           ;   (message (shell-command-to-string "whatsfree")))
 #+END_SRC
-*** yasnippet
-include yasnippets for nice snippets
-#+BEGIN_SRC emacs-lisp
-  (use-package yasnippet :ensure t)
-  (yas-global-mode 1)
-  (use-package yasnippet-snippets :ensure t)
-
-#+END_SRC
 
 *** moving autosave directory to .emacs.d/saves
 #+BEGIN_SRC emacs-lisp
@@ -154,20 +115,6 @@ include yasnippets for nice snippets
 
 #+END_SRC
 
-*** enable line number mode
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'find-file-hook 'linum-mode)
-#+END_SRC
-
-
-
-
-
-*** Treemacs
-#+BEGIN_SRC emacs-lisp
-(use-package treemacs :ensure t)
-(global-set-key (kbd "C-c l") 'treemacs)
-#+END_SRC
 *** Multi-term
 #+BEGIN_SRC emacs-lisp
     ;;(setq-default explicit-shell-file-name "/bin/zsh")
@@ -199,16 +146,6 @@ include yasnippets for nice snippets
 #+BEGIN_SRC emacs-lisp
   ;;(setq create-lockfiles nil)
 #+END_SRC
-*** Fix inaccessible functions on Mac-osx platform
-This seems to fix the problem!
-#+BEGIN_SRC emacs-lisp
-(use-package exec-path-from-shell :ensure t)
-(when (memq window-system '(mac ns x))
-  (exec-path-from-shell-initialize))
-
-
-#+END_SRC
-
 *** Adds ability to expand window in group
     I wrote this code to expand the current buffers window so that you can see more of the code if needed
 #+BEGIN_SRC emacs-lisp
@@ -260,4 +197,45 @@ This seems to fix the problem!
   (setq-default right-fringe-width 20)
 
   (global-git-gutter-mode +1)
+
+#+END_SRC
+*** FiraCode with ligatures
+
+This has been a disappointment, it crashes at so many points with so
+many different features within emacs. When something crashes, it is
+probably in-part because of this...
+
+
+#+BEGIN_SRC emacs-lisp
+(when (window-system)
+  (set-default-font "Fira Code"))
+(let ((alist '((33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
+               (35 . ".\\(?:###\\|##\\|_(\\|[#(?[_{]\\)")
+               (36 . ".\\(?:>\\)")
+               (37 . ".\\(?:\\(?:%%\\)\\|%\\)")
+               (38 . ".\\(?:\\(?:&&\\)\\|&\\)")
+               (42 . ".\\(?:\\(?:\\*\\*/\\)\\|\\(?:\\*[*/]\\)\\|[*/>]\\)")
+;; crashes cpp mode: (43 . ".\\(?:\\(?:\\+\\+\\)\\|[+>]\\)")
+;; crashes eshell:   (45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
+;; hasn't crashed yet, reported to crash with helm integration:  (46 . ".\\(?:\\(?:\\.[.<]\\)\\|[.=-]\\)")
+;; crashes cpp mode: (47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
+               (48 . ".\\(?:x[a-zA-Z]\\)")
+               (58 . ".\\(?:::\\|[:=]\\)")
+               (59 . ".\\(?:;;\\|;\\)")
+               (60 . ".\\(?:\\(?:!--\\)\\|\\(?:~~\\|->\\|\\$>\\|\\*>\\|\\+>\\|--\\|<[<=-]\\|=[<=>]\\||>\\)\\|[*$+~/<=>|-]\\)")
+               (61 . ".\\(?:\\(?:/=\\|:=\\|<<\\|=[=>]\\|>>\\)\\|[<=>~]\\)")
+               (62 . ".\\(?:\\(?:=>\\|>[=>-]\\)\\|[=>-]\\)")
+               (63 . ".\\(?:\\(\\?\\?\\)\\|[:=?]\\)")
+               (91 . ".\\(?:]\\)")
+               (92 . ".\\(?:\\(?:\\\\\\\\\\)\\|\\\\\\)")
+               (94 . ".\\(?:=\\)")
+               (119 . ".\\(?:ww\\)")
+               (123 . ".\\(?:-\\)")
+               (124 . ".\\(?:\\(?:|[=|]\\)\\|[=>|]\\)")
+               (126 . ".\\(?:~>\\|~~\\|[>=@~-]\\)")
+               )
+             ))
+  (dolist (char-regexp alist)
+    (set-char-table-range composition-function-table (car char-regexp)
+                          `([,(cdr char-regexp) 0 font-shape-gstring]))))
 #+END_SRC

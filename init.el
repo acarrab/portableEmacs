@@ -61,7 +61,7 @@
 (setq portable-emacs-dir (file-name-directory (or load-file-name (buffer-file-name))))
 
 (org-babel-load-file (expand-file-name "static.org" portable-emacs-dir))
-
+(org-babel-load-file (expand-file-name "keybindings.org" portable-emacs-dir))
  ;; load yasnippet directory
 (setq yas-files (expand-file-name "yasnippet" portable-emacs-dir))
 (setq yas-snippet-dirs '(yas-files))

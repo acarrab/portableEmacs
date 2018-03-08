@@ -1,12 +1,8 @@
 ** User Keybindings
+
    #+BEGIN_SRC emacs-lisp
-
-     (defun halve-other-window-height ()
-       "Expand current window to use half of the other window's lines."
-       (interactive)
-       (enlarge-window (/ (window-height (next-window)) 2)))
-
-
      (global-set-key (kbd "C-c j") 'ace-window)
+     (global-set-key (kbd "C-c c") 'shell-command)
+     (global-set-key (kbd "C-c M-c") 'async-shell-command)
 
    #+END_SRC

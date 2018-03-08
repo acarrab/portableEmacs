@@ -328,3 +328,8 @@ include yasnippets for nice snippets
   (use-package yasnippet-snippets :ensure t)
 
 #+END_SRC
+
+*** Install async mode
+#+BEGIN_SRC emacs-lisp
+(use-package async :ensure t)
+#+END_SRC

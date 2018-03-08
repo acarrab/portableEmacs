@@ -1,15 +1,8 @@
 #!/bin/bash -x
 
+init="$HOME/.emacs.d/init.el"
+line='(load "'$(dirname $(realpath $0))'/init.el")'
 
-neededLines='
-(setq init-dir (file-name-directory (or load-file-name (buffer-file-name))))
-(load (expand-file-name "portableEmacs/init.el" init-dir))'
-initFile="$HOME/.emacs.d/init.el"
+if [[ ! -f $init ]]; then touch $init; fi
 
-if [ ! -f $initFile ]; then
-    printf "$neededLines" > $initFile
-else
-    if [[ $(grep -f  $initFile ./loadLinesForInit.el) = "" ]]; then
-	printf "$neededLines" >> $initFile
-    fi
-fi
+if [[ "$(grep "$line" <$init)" = ""  ]]; then echo "$line" >> $init; fi

@@ -9,16 +9,14 @@ language.
    #+BEGIN_SRC bash
 mkdir ~/.emacs.d
 cd ~/.emacs.d
-git init
-git remote add origin git@github.com:acarrab/portableEmacs.git
-git pull origin master
-git reset --hard origin/master
+
+git clone https://github.com/acarrab/portableEmacs.git
+cd portableEmacs
+
+bash ./install.sh
    #+END_SRC
 
-You can also define your own commands separate from given ones by
-defining them in a file called ~user.org~ that could be formatted
-similarly to my ~loader.org~. The file ~user.org~ will be
-automatically loaded in ~init.el~ file.
+You can still add settings to your init.el file as well.
 
 
 * Configuration File
@@ -612,6 +610,3 @@ This seems to fix the problem!
   (global-git-gutter-mode +1)
 #+END_SRC
 # <configure end>
-
-
-

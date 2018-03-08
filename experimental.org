@@ -212,44 +212,44 @@ This seems to fix the problem!
 *** Adds ability to expand window in group
     I wrote this code to expand the current buffers window so that you can see more of the code if needed
 #+BEGIN_SRC emacs-lisp
-    (setq window-shrink-columns 20)
-    (setq window-shrink-rows 10)
+  (setq window-shrink-columns 20)
+  (setq window-shrink-rows 10)
 
-    (defun focus-shrink-all-other-windows ()
-      "expands window in current group"
-      (interactive)
+  (defun focus-shrink-all-other-windows ()
+    "expands window in current group"
+    (interactive)
 
 
-      (defun go-to-windows (win nxt)
-        "returns a string with all window widths in current row"
-        (if (not (eq win nil))
-            (progn
-              (funcall
-               (lambda (win)
-                 (if (window-combined-p)
-                     (progn
-                       (window-resize win (window-resizable win -10000))
-                       (window-resize win (window-resizable win window-shrink-rows))
-                       )
-                   (progn
-                     (window-resize win (window-resizable win -10000 t) t)
-                     (window-resize win (window-resizable win window-shrink-columns t) t)
+    (defun go-to-windows (win nxt)
+      "returns a string with all window widths in current row"
+      (if (not (eq win nil))
+          (progn
+            (funcall
+             (lambda (win)
+               (if (window-combined-p)
+                   (nprogn
+                     (window-resize win (window-resizable win -10000))
+                     (window-resize win (window-resizable win window-shrink-rows))
                      )
+                 (progn
+                   (window-resize win (window-resizable win -10000 t) t)
+                   (window-resize win (window-resizable win window-shrink-columns t) t)
                    )
                  )
-               win
                )
-              (go-to-windows (funcall nxt win) nxt)
-              )
-          )
+             win
+             )
+            (go-to-windows (funcall nxt win) nxt)
+            )
         )
-
-
-      (go-to-windows (window-prev-sibling (get-buffer-window)) (lambda (x) (window-prev-sibling x)))
-      (go-to-windows (window-next-sibling (get-buffer-window)) (lambda (x) (window-next-sibling x)))
       )
 
-     (global-set-key (kbd "C-c f") 'focus-shrink-all-other-windows)
+
+    (go-to-windows (window-prev-sibling) (lambda (x) (window-prev-sibling x)))
+    (go-to-windows (window-next-sibling) (lambda (x) (window-next-sibling x)))
+    )
+
+   (global-set-key (kbd "C-c f") 'focus-shrink-all-other-windows)
 #+END_SRC
 *** git-gutter
 #+BEGIN_SRC emacs-lisp

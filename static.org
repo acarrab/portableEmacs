@@ -243,11 +243,6 @@ Some latex within org syntax highlighting
   (require 'rainbow-delimiters)
 #+END_SRC
 
-**** enable line number mode
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'find-file-hook 'linum-mode)
-#+END_SRC
-
 *** Re-builder
 Make regex builder have the same format as the regex for search and replace
 #+BEGIN_SRC emacs-lisp

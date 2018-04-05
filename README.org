@@ -273,6 +273,12 @@ Make regex builder have the same format as the regex for search and replace
   (setq reb-re-syntax 'string)
 #+END_SRC
 
+*** Treemacs
+#+BEGIN_SRC emacs-lisp
+(use-package treemacs :ensure t)
+(global-set-key (kbd "C-c l") 'treemacs)
+#+END_SRC
+
 *** Startup
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-startup-screen t)
@@ -332,23 +338,42 @@ Make regex builder have the same format as the regex for search and replace
 
 #+END_SRC
 
+*** yasnippet
+include yasnippets for nice snippets
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet :ensure t)
+  (yas-global-mode 1)
+  (use-package yasnippet-snippets :ensure t)
 
-** User Keybindings
-   #+BEGIN_SRC emacs-lisp
+#+END_SRC
 
-     (defun halve-other-window-height ()
-       "Expand current window to use half of the other window's lines."
-       (interactive)
-       (enlarge-window (/ (window-height (next-window)) 2)))
-
-
-     (global-set-key (kbd "C-c j") 'ace-window)
-
-   #+END_SRC
+*** Install async mode
+#+BEGIN_SRC emacs-lisp
+(use-package async :ensure t)
+#+END_SRC
 
 #+OPTIONS: H:5 num:nil tags:nil timestamps:t
 ** Experimental
    This file contains properties that may often change, which would cause recompilation
+*** f.el
+#+BEGIN_SRC emacs-lisp
+(use-package f :ensure t)
+(require 'f)
+#+END_SRC
+*** Fix inaccessible functions on Mac-osx platform
+This seems to fix the problem!
+#+BEGIN_SRC emacs-lisp
+(use-package exec-path-from-shell :ensure t)
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
+
+
+#+END_SRC
+*** Javascript indentation
+
+#+BEGIN_SRC emacs-lisp
+(setq js2-basic-offset 2)
+#+END_SRC
 *** Typescript
 **** Tide
 #+BEGIN_SRC emacs-lisp
@@ -366,7 +391,6 @@ Make regex builder have the same format as the regex for search and replace
     ;; install it separately via package-install
     ;; `M-x package-install [ret] company`
     (company-mode +1)
-
     )
 
 
@@ -395,10 +419,11 @@ Make regex builder have the same format as the regex for search and replace
   (flycheck-add-mode 'typescript-tslint 'web-mode)
 #+END_SRC
 **** Company Key binding C-c C-SPC
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC
   (eval-after-load "tide-mode"
     '(define-key tide-mode-map (kbd "C-c C-SPC") 'company-tide))
 #+END_SRC
+
 **** Format Options
 #+BEGIN_SRC emacs-lisp
   (setq tide-format-options
@@ -406,16 +431,160 @@ Make regex builder have the same format as the regex for search and replace
         )
 #+END_SRC
 **** Keybindings
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC
   (defun my-tide-config ()
     "add keybindings that activate when using tide-mode"
     (local-set-key (kbd "C-c C-SPC") 'company-tide)
   )
   (add-hook 'tide-mode-hook 'my-tide-config)
 
+#+END_SRC
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-c C-SPC") 'company-complete)
 
 #+END_SRC
 
+*** Palmetto Cluster Specific
+
+#+BEGIN_SRC emacs-lisp
+  (defun flip()
+    "flips directory to other and opens dired mode"
+    (interactive)
+    (dired
+     (if (eq 0 (string-match "\\(/scratch3/acarrab/\\)" (expand-file-name default-directory)))
+         (replace-regexp-in-string "/scratch3/" "/zfs/safrolab/users/" (expand-file-name default-directory))
+       (replace-regexp-in-string "/zfs/safrolab/users/" "/scratch3/" (expand-file-name default-directory))
+       )
+     ))
+
+  (defun qstat ()
+    "Get my active jobs"
+    (interactive)
+    (message (shell-command-to-string "qstat -u acarrab")))
+
+  (defun whatsfree ()
+    "Get list of  what nodes are free"
+    (interactive)
+    (message (shell-command-to-string "whatsfree")))
+
+                                          ; (defun qsub ()
+                                          ;   "Get my active jobs"
+                                          ;   (interactive)
+                                          ;   (message (shell-command-to-string "whatsfree")))
+#+END_SRC
+
+*** moving autosave directory to .emacs.d/saves
+#+BEGIN_SRC emacs-lisp
+  (setq backup-directory-alist
+        `(("." . ,(expand-file-name (concat user-emacs-directory "backups")))))
+  (setq auto-save-file-name-transforms
+        `((".*" ,(expand-file-name (concat user-emacs-directory "autosaves")) t)))
+
+#+END_SRC
+
+*** Multi-term
+#+BEGIN_SRC emacs-lisp
+    ;;(setq-default explicit-shell-file-name "/bin/zsh")
+    ;;(setq-default shell-file-name "/bin/zsh")
+    ;; some other multi-term line was here...
+    (setenv "SHELL" "/bin/zsh")
+    (setq explicit-shell-file-name "/bin/zsh")
+
+
+    (use-package multi-term :ensure t)
+    (defun run-term ()
+      (interactive)
+      (command-execute 'multi-term)
+      (setq-default truncate-lines nil)
+      )
+
+
+
+    (global-set-key (kbd "C-c t") 'run-term)
+
+
+
+
+
+#+END_SRC
+
+*** Shortcut for toggling filelock
+
+#+BEGIN_SRC emacs-lisp
+  ;;(setq create-lockfiles nil)
+#+END_SRC
+*** Adds ability to expand window in group
+    I wrote this code to expand the current buffers window so that you can see more of the code if needed
+#+BEGIN_SRC emacs-lisp
+  (setq window-shrink-columns 20)
+  (setq window-shrink-rows 10)
+
+  (defun focus-shrink-all-other-windows ()
+    "expands window in current group"
+    (interactive)
+
+
+    (defun go-to-windows (win nxt)
+      "returns a string with all window widths in current row"
+      (if (not (eq win nil))
+          (progn
+            (funcall
+             (lambda (win)
+               (if (window-combined-p)
+                   (nprogn
+                     (window-resize win (window-resizable win -10000))
+                     (window-resize win (window-resizable win window-shrink-rows))
+                     )
+                 (progn
+                   (window-resize win (window-resizable win -10000 t) t)
+                   (window-resize win (window-resizable win window-shrink-columns t) t)
+                   )
+                 )
+               )
+             win
+             )
+            (go-to-windows (funcall nxt win) nxt)
+            )
+        )
+      )
+
+
+    (go-to-windows (window-prev-sibling) (lambda (x) (window-prev-sibling x)))
+    (go-to-windows (window-next-sibling) (lambda (x) (window-next-sibling x)))
+    )
+
+   (global-set-key (kbd "C-c f") 'focus-shrink-all-other-windows)
+#+END_SRC
+*** git-gutter
+#+BEGIN_SRC emacs-lisp
+
+  (if (display-graphic-p)
+      (progn
+	(use-package git-gutter-fringe :ensure t)
+	(require 'git-gutter-fringe)
+
+	(setq-default left-fringe-width 20)
+	(setq-default right-fringe-width 20)
+
+	(global-git-gutter-mode +1)
+	(add-hook 'find-file-hook 'linum-mode)
+	)
+    (progn
+      (use-package git-gutter :ensure t)
+      (require 'git-gutter)
+      (global-git-gutter-mode +1)
+      (git-gutter:linum-setup)
+      (custom-set-variables
+       '(git-gutter:modified-sign "  ") ;; two space
+       '(git-gutter:added-sign "++")    ;; multiple character is OK
+       '(git-gutter:deleted-sign "--"))
+      (set-face-background 'git-gutter:modified "purple") ;; background color
+      (set-face-foreground 'git-gutter:added "green")
+      (set-face-foreground 'git-gutter:deleted "red")
+      )
+    )
+
+#+END_SRC
 *** FiraCode with ligatures
 
 This has been a disappointment, it crashes at so many points with so
@@ -456,157 +625,106 @@ probably in-part because of this...
     (set-char-table-range composition-function-table (car char-regexp)
                           `([,(cdr char-regexp) 0 font-shape-gstring]))))
 #+END_SRC
-*** Palmetto Cluster Specific
 
+*** install async mode
+
+*** User space configuration
 #+BEGIN_SRC emacs-lisp
-  (defun flip()
-    "flips directory to other and opens dired mode"
-    (interactive)
-    (dired
-     (if (eq 0 (string-match "\\(/scratch3/acarrab/\\)" (expand-file-name default-directory)))
-         (replace-regexp-in-string "/scratch3/" "/zfs/safrolab/users/" (expand-file-name default-directory))
-       (replace-regexp-in-string "/zfs/safrolab/users/" "/scratch3/" (expand-file-name default-directory))
-       )
-     ))
+    (require 'cl)
 
-  (defun qstat ()
-    "Get my active jobs"
-    (interactive)
-    (message (shell-command-to-string "qstat -u acarrab")))
+      (defun multi-term-kill-all ()
+        "kills all multi-term processes with ctrl+c ctrl+d"
+        (interactive)
+        (defun is-useless-buffer (buffer)
+          (let ((name (buffer-name buffer)))
+          (and (= ?* (aref name 0)) (string-match "\*terminal<[0-9]+>\*" name))))
 
-  (defun whatsfree ()
-    "Get list of  what nodes are free"
-    (interactive)
-    (message (shell-command-to-string "whatsfree")))
-
-                                          ; (defun qsub ()
-                                          ;   "Get my active jobs"
-                                          ;   (interactive)
-                                          ;   (message (shell-command-to-string "whatsfree")))
-#+END_SRC
-*** yasnippet
-include yasnippets for nice snippets
-#+BEGIN_SRC emacs-lisp
-  (use-package yasnippet :ensure t)
-  (yas-global-mode 1)
-  (use-package yasnippet-snippets :ensure t)
-
-#+END_SRC
-
-*** moving autosave directory to .emacs.d/saves
-#+BEGIN_SRC emacs-lisp
-  (setq backup-directory-alist
-        `(("." . ,(expand-file-name (concat user-emacs-directory "backups")))))
-  (setq auto-save-file-name-transforms
-        `((".*" ,(expand-file-name (concat user-emacs-directory "autosaves")) t)))
-
-#+END_SRC
-
-*** enable line number mode
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'find-file-hook 'linum-mode)
-#+END_SRC
-
-
-
-
-
-*** Treemacs
-#+BEGIN_SRC emacs-lisp
-(use-package treemacs :ensure t)
-(global-set-key (kbd "C-c l") 'treemacs)
-#+END_SRC
-*** Multi-term
-#+BEGIN_SRC emacs-lisp
-    ;;(setq-default explicit-shell-file-name "/bin/zsh")
-    ;;(setq-default shell-file-name "/bin/zsh")
-    ;; some other multi-term line was here...
-    (setenv "SHELL" "/bin/zsh")
-    (setq explicit-shell-file-name "/bin/zsh")
-
-
-    (use-package multi-term :ensure t)
-    (defun run-term ()
-      (interactive)
-      (command-execute 'multi-term)
-      (setq-default truncate-lines nil)
-      )
-
-
-
-    (global-set-key (kbd "C-c t") 'run-term)
-
-
-
-
-
-#+END_SRC
-
-*** Shortcut for toggling filelock
-
-#+BEGIN_SRC emacs-lisp
-  ;;(setq create-lockfiles nil)
-#+END_SRC
-*** Fix inaccessible functions on Mac-osx platform
-This seems to fix the problem!
-#+BEGIN_SRC emacs-lisp
-(use-package exec-path-from-shell :ensure t)
-(when (memq window-system '(mac ns x))
-  (exec-path-from-shell-initialize))
-
-
-#+END_SRC
-
-*** Adds ability to expand window in group
-    I wrote this code to expand the current buffers window so that you can see more of the code if needed
-#+BEGIN_SRC emacs-lisp
-    (setq window-shrink-columns 20)
-    (setq window-shrink-rows 10)
-
-    (defun focus-shrink-all-other-windows ()
-      "expands window in current group"
-      (interactive)
-
-
-      (defun go-to-windows (win nxt)
-        "returns a string with all window widths in current row"
-        (if (not (eq win nil))
-            (progn
-              (funcall
-               (lambda (win)
-                 (if (window-combined-p)
-                     (progn
-                       (window-resize win (window-resizable win -10000))
-                       (window-resize win (window-resizable win window-shrink-rows))
-                       )
-                   (progn
-                     (window-resize win (window-resizable win -10000 t) t)
-                     (window-resize win (window-resizable win window-shrink-columns t) t)
-                     )
-                   )
-                 )
-               win
-               )
-              (go-to-windows (funcall nxt win) nxt)
+        (loop for buffer being the buffers
+              do (and
+                  (is-useless-buffer buffer)
+                  (progn (switch-to-buffer buffer) (term-send-raw-string "\C-c") (term-send-raw-string "\C-d"))
+                  )
               )
+        )
+
+    (defun create-view ()
+      "creates the view for the current project"
+
+      (interactive)
+      (defun find-first-file-in-directories-above (file)
+        (defun get-file-or-null (searching-directory)
+          (if (file-exists-p (expand-file-name file searching-directory))
+              (expand-file-name file searching-directory)
+            (if (string-equal searching-directory "/") nil
+              (get-file-or-null (replace-regexp-in-string "[^/]*/$" "" searching-directory))
+              )
+            )
           )
+        (get-file-or-null default-directory)
+        )
+
+      (defun multi-term-and-run (process-string)
+        "run a multi-term processes then run a command inside of it"
+        (multi-term)
+        (term-send-raw-string (concat process-string "\n"))
         )
 
 
-      (go-to-windows (window-prev-sibling (get-buffer-window)) (lambda (x) (window-prev-sibling x)))
-      (go-to-windows (window-next-sibling (get-buffer-window)) (lambda (x) (window-next-sibling x)))
+
+      (multi-term-kill-all)
+      (delete-other-windows)
+      (setq right (y-or-n-p "To right?"))
+
+      ;;(kill-matching-buffers "\*terminal<[0-9]*>\*")
+      (delete-other-windows)
+
+      (treemacs)
+      (other-window 1)
+
+
+      (defun create-terminals-for-view (config-file)
+        (load-file config-file)
+        (if right (split-window-horizontally) (split-window-vertically))
+        (other-window 1)
+
+        ;; shrink the terminal windows
+        (defun shrink-terminal-windows (win)
+          (if right
+              (progn
+                (window-resize win (window-resizable win -10000 t) t)
+                (window-resize win (window-resizable win 40 t) t)
+                )
+            (progn
+              (window-resize win (window-resizable win -10000))
+              (window-resize win (window-resizable win 10))
+              )
+            )
+          )
+
+        ;; terminal windows
+        (defun create-terminals (cmds)
+          "creates terminals and stops 1 past last terminal"
+          (when cmds
+            (multi-term-and-run (car cmds))
+            (if (cdr cmds)
+                (if right (split-window-vertically) (split-window-horizontally))
+              (progn (balance-windows) (shrink-terminal-windows (get-buffer-window)))
+              )
+            (other-window 1)
+            (create-terminals (cdr cmds))
+            )
+          )
+        (create-terminals project-script-commands)
+        )
+
+
+      (setq config-file (find-first-file-in-directories-above ".view.el"))
+      (if (not config-file) (message "No .view.el file was found. Making standard view...")
+        (create-terminals-for-view config-file)
+        )
       )
 
-     (global-set-key (kbd "C-c f") 'focus-shrink-all-other-windows)
-#+END_SRC
-*** git-gutter
-#+BEGIN_SRC emacs-lisp
-  (use-package git-gutter-fringe :ensure t)
-  (require 'git-gutter-fringe)
-
-  (setq-default left-fringe-width 20)
-  (setq-default right-fringe-width 20)
-
-  (global-git-gutter-mode +1)
+     (global-set-key (kbd "C-c v") 'create-view)
 #+END_SRC
 # <configure end>
+

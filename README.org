@@ -727,55 +727,57 @@ probably in-part because of this...
 	(setq right (y-or-n-p "Put the terminals to the right? (default is bottom) "))
 	(delete-other-windows)
 	)
-      ;;(kill-matching-buffers "\*terminal<[0-9]*>\*")
-      (find-file project-base-directory)
-      (if (y-or-n-p "Use Treemacs? ") (progn (treemacs) (other-window 1)))
+      )
+    ;;(kill-matching-buffers "\*terminal<[0-9]*>\*")
+    (find-file project-base-directory)
+    (if (y-or-n-p "Use Treemacs? ") (progn (treemacs) (other-window 1)))
 
 
 
-      ;; split into user files and terminal view
+    ;; split into user files and terminal view
 
-      (defun open-user-files (project-files-list)
-	"opens users files."
-	(when project-files-list
-	  (find-file (car project-files-list))
-	  (if (cdr project-files-list) (split-window-horizontally))
-	  (other-window 1)
-	  (open-user-files (cdr project-files-list))
-	  )
+    (defun open-user-files (project-files-list)
+      "opens users files."
+      (when project-files-list
+	(find-file (car project-files-list))
+	(if (cdr project-files-list) (split-window-horizontally))
+	(other-window 1)
+	(open-user-files (cdr project-files-list))
 	)
-      ;; terminal windows
-      (defun create-terminals (cmds)
-	"creates terminals and stops 1 past last terminal"
-	(when cmds
-	  (multi-term-and-run (concat (concat "cd " project-base-directory) (concat " && " (car cmds))))
-	  (if (cdr cmds)
-	      (if right (split-window-vertically) (split-window-horizontally))
-	    (progn (balance-windows) (shrink-my-window (get-buffer-window) right))
-	    )
-	  (other-window 1)
-	  (create-terminals (cdr cmds))
+      )
+    ;; terminal windows
+    (defun create-terminals (cmds)
+      "creates terminals and stops 1 past last terminal"
+      (when cmds
+	(multi-term-and-run (concat (concat "cd " project-base-directory) (concat " && " (car cmds))))
+	(if (cdr cmds)
+	    (if right (split-window-vertically) (split-window-horizontally))
+	  (progn (balance-windows) (shrink-my-window (get-buffer-window) right))
 	  )
+	(other-window 1)
+	(create-terminals (cdr cmds))
 	)
-
-      (when project-script-commands
-	(if right   (split-window-horizontally) (split-window-vertically))
-        )
-      (open-user-files project-files-to-open)
-      (create-terminals project-script-commands)
       )
 
-    (setq config-file (find-first-file-in-directories-above ".view.el"))
-    (if (not config-file) (generate-view-config-file)
-      (generate-view-from-file config-file
-			       (setq project-base-directory (replace-regexp-in-string "/[^/]*$" "" config-file))
-			       )
+    (when project-script-commands
+      (if right   (split-window-horizontally) (split-window-vertically))
       )
+    (open-user-files project-files-to-open)
+    (create-terminals project-script-commands)
     )
 
-  (global-set-key (kbd "C-c v") 'create-view)
+  (setq config-file (find-first-file-in-directories-above ".view.el"))
+  (if (not config-file) (generate-view-config-file)
+    (generate-view-from-file config-file
+			     (setq project-base-directory (replace-regexp-in-string "/[^/]*$" "" config-file))
+			     )
+    )
+  )
+
+(global-set-key (kbd "C-c v") 'create-view)
 #+END_SRC
 # <configure end>
+
 
 
 

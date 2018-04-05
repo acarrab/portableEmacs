@@ -630,101 +630,105 @@ probably in-part because of this...
 
 *** User space configuration
 #+BEGIN_SRC emacs-lisp
-    (require 'cl)
+  (require 'cl)
 
-      (defun multi-term-kill-all ()
-        "kills all multi-term processes with ctrl+c ctrl+d"
-        (interactive)
-        (defun is-useless-buffer (buffer)
-          (let ((name (buffer-name buffer)))
-          (and (= ?* (aref name 0)) (string-match "\*terminal<[0-9]+>\*" name))))
-
-        (loop for buffer being the buffers
-              do (and
-                  (is-useless-buffer buffer)
-                  (progn (switch-to-buffer buffer) (term-send-raw-string "\C-c") (term-send-raw-string "\C-d"))
-                  )
-              )
-        )
-
-    (defun create-view ()
-      "creates the view for the current project"
-
+    (defun multi-term-kill-all ()
+      "kills all multi-term processes with ctrl+c ctrl+d"
       (interactive)
-      (defun find-first-file-in-directories-above (file)
-        (defun get-file-or-null (searching-directory)
-          (if (file-exists-p (expand-file-name file searching-directory))
-              (expand-file-name file searching-directory)
-            (if (string-equal searching-directory "/") nil
-              (get-file-or-null (replace-regexp-in-string "[^/]*/$" "" searching-directory))
-              )
-            )
-          )
-        (get-file-or-null default-directory)
-        )
+      (defun is-useless-buffer (buffer)
+        (let ((name (buffer-name buffer)))
+        (and (= ?* (aref name 0)) (string-match "\*terminal<[0-9]+>\*" name))))
 
-      (defun multi-term-and-run (process-string)
-        "run a multi-term processes then run a command inside of it"
-        (multi-term)
-        (term-send-raw-string (concat process-string "\n"))
-        )
-
-
-
-      (multi-term-kill-all)
-      (delete-other-windows)
-      (setq right (y-or-n-p "To right?"))
-
-      ;;(kill-matching-buffers "\*terminal<[0-9]*>\*")
-      (delete-other-windows)
-
-      (treemacs)
-      (other-window 1)
-
-
-      (defun create-terminals-for-view (config-file)
-        (load-file config-file)
-        (if right (split-window-horizontally) (split-window-vertically))
-        (other-window 1)
-
-        ;; shrink the terminal windows
-        (defun shrink-terminal-windows (win)
-          (if right
-              (progn
-                (window-resize win (window-resizable win -10000 t) t)
-                (window-resize win (window-resizable win 40 t) t)
+      (loop for buffer being the buffers
+            do (and
+                (is-useless-buffer buffer)
+                (progn (switch-to-buffer buffer) (term-send-raw-string "\C-c") (term-send-raw-string "\C-d"))
                 )
-            (progn
-              (window-resize win (window-resizable win -10000))
-              (window-resize win (window-resizable win 10))
-              )
             )
-          )
-
-        ;; terminal windows
-        (defun create-terminals (cmds)
-          "creates terminals and stops 1 past last terminal"
-          (when cmds
-            (multi-term-and-run (car cmds))
-            (if (cdr cmds)
-                (if right (split-window-vertically) (split-window-horizontally))
-              (progn (balance-windows) (shrink-terminal-windows (get-buffer-window)))
-              )
-            (other-window 1)
-            (create-terminals (cdr cmds))
-            )
-          )
-        (create-terminals project-script-commands)
-        )
-
-
-      (setq config-file (find-first-file-in-directories-above ".view.el"))
-      (if (not config-file) (message "No .view.el file was found. Making standard view...")
-        (create-terminals-for-view config-file)
-        )
       )
 
-     (global-set-key (kbd "C-c v") 'create-view)
+  (defun create-view ()
+    "creates the view for the current project"
+
+    (interactive)
+    (defun find-first-file-in-directories-above (file)
+      (defun get-file-or-null (searching-directory)
+        (if (file-exists-p (expand-file-name file searching-directory))
+            (expand-file-name file searching-directory)
+          (if (string-equal searching-directory "/") nil
+            (get-file-or-null (replace-regexp-in-string "[^/]*/$" "" searching-directory))
+            )
+          )
+        )
+      (get-file-or-null default-directory)
+      )
+
+    (defun multi-term-and-run (process-string)
+      "run a multi-term processes then run a command inside of it"
+      (multi-term)
+      (term-send-raw-string (concat process-string "\n"))
+      )
+
+
+
+    (multi-term-kill-all)
+    (delete-other-windows)
+    (setq right (y-or-n-p "To right?"))
+
+    ;;(kill-matching-buffers "\*terminal<[0-9]*>\*")
+    (delete-other-windows)
+
+    (treemacs)
+    (other-window 1)
+
+
+    (defun create-terminals-for-view (config-file project-base-directory)
+      (load-file config-file)
+      (if right (split-window-horizontally) (split-window-vertically))
+      (other-window 1)
+
+      ;; shrink the terminal windows
+      (defun shrink-terminal-windows (win)
+        (if right
+            (progn
+              (window-resize win (window-resizable win -10000 t) t)
+              (window-resize win (window-resizable win 40 t) t)
+              )
+          (progn
+            (window-resize win (window-resizable win -10000))
+            (window-resize win (window-resizable win 10))
+            )
+          )
+        )
+
+      ;; terminal windows
+      (defun create-terminals (cmds)
+        "creates terminals and stops 1 past last terminal"
+        (when cmds
+          (multi-term-and-run (concat (concat "cd " project-base-directory) (concat " && " (car cmds))))
+          (if (cdr cmds)
+              (if right (split-window-vertically) (split-window-horizontally))
+            (progn (balance-windows) (shrink-terminal-windows (get-buffer-window)))
+            )
+          (other-window 1)
+          (create-terminals (cdr cmds))
+          )
+        )
+      (create-terminals project-script-commands)
+      )
+
+
+    (setq config-file (find-first-file-in-directories-above ".view.el"))
+    (if (not config-file) (message "No .view.el file was found. Making standard view...")
+      (progn
+        (setq project-base-directory (replace-regexp-in-string "/[^/]*$" "" config-file))
+        (create-terminals-for-view config-file project-base-directory)
+      )
+      )
+    )
+
+   (global-set-key (kbd "C-c v") 'create-view)
 #+END_SRC
 # <configure end>
+
 

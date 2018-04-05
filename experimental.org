@@ -365,12 +365,12 @@ probably in-part because of this...
 
         (multi-term-kill-all)
 
-
 	(if (treemacs--is-visible?) (delete-window (treemacs--is-visible?)))
         (delete-other-windows)
         (setq right (y-or-n-p "Put the terminals to the right? (default is bottom) "))
         (delete-other-windows)
         ;;(kill-matching-buffers "\*terminal<[0-9]*>\*")
+	(find-file project-base-directory)
         (if (y-or-n-p "Use Treemacs? ") (progn (treemacs) (other-window 1)))
 
 

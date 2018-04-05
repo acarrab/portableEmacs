@@ -272,9 +272,20 @@ probably in-part because of this...
                           `([,(cdr char-regexp) 0 font-shape-gstring]))))
 #+END_SRC
 
-*** install async mode
-
 *** User space configuration
+
+    This sets up a view for a project file.
+
+    If you want to use,
+    1. create a file called ~.view.el~ in the root of your project directory
+    2. put the command with whatever terminal commands you want
+       ~(setq project-script-commands '("echo terminal command 1" "echo terminal command 2" "echo terminal command 3")~
+    3. run ~create-view~
+       For me it is bount to ~C-c v~
+
+
+
+
 #+BEGIN_SRC emacs-lisp
   (require 'cl)
 
@@ -319,13 +330,14 @@ probably in-part because of this...
 
     (multi-term-kill-all)
     (delete-other-windows)
-    (setq right (y-or-n-p "To right?"))
+    (setq use-treemacs (y-or-n-p "Use Treemacs? "))
+    (setq right (y-or-n-p "Put the terminals to the right? (default is bottom) "))
 
     ;;(kill-matching-buffers "\*terminal<[0-9]*>\*")
     (delete-other-windows)
 
-    (treemacs)
-    (other-window 1)
+    (if use-treemacs (progn (treemacs) (other-window 1)))
+
 
 
     (defun create-terminals-for-view (config-file project-base-directory)

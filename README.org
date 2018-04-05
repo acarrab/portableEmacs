@@ -682,18 +682,6 @@ probably in-part because of this...
 
 
 
-    (multi-term-kill-all)
-    (delete-other-windows)
-    (setq use-treemacs (y-or-n-p "Use Treemacs? "))
-    (setq right (y-or-n-p "Put the terminals to the right? (default is bottom) "))
-
-    ;;(kill-matching-buffers "\*terminal<[0-9]*>\*")
-    (delete-other-windows)
-
-    (if use-treemacs (progn (treemacs) (other-window 1)))
-
-
-
     (defun create-terminals-for-view (config-file project-base-directory)
       (load-file config-file)
       (if right (split-window-horizontally) (split-window-vertically))
@@ -731,17 +719,39 @@ probably in-part because of this...
 
 
     (setq config-file (find-first-file-in-directories-above ".view.el"))
-    (if (not config-file) (message "No .view.el file was found. Making standard view...")
+    (if (not config-file)
+        (progn
+          (message "No .view.el file was found. Making standard view...")
+          (find-file (expand-file-name ".view.el"))
+	  (erase-buffer)
+	  (insert-string "(setq project-script-commands '())")
+	  (backward-char)
+	  (backward-char)
+          )
       (progn
         (setq project-base-directory (replace-regexp-in-string "/[^/]*$" "" config-file))
         (create-terminals-for-view config-file project-base-directory)
-      )
+
+
+
+
+	(multi-term-kill-all)
+	(delete-other-windows)
+	(setq use-treemacs (y-or-n-p "Use Treemacs? "))
+	(setq right (y-or-n-p "Put the terminals to the right? (default is bottom) "))
+
+	;;(kill-matching-buffers "\*terminal<[0-9]*>\*")
+	(delete-other-windows)
+
+	(if use-treemacs (progn (treemacs) (other-window 1)))
+	)
       )
     )
 
    (global-set-key (kbd "C-c v") 'create-view)
 #+END_SRC
 # <configure end>
+
 
 
 

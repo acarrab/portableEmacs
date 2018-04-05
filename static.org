@@ -17,21 +17,22 @@
    Adding things to the package repository
 
    #+BEGIN_SRC emacs-lisp
-  (setq package-archives nil)
-  ;; Load packages from online
-  (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                           ("marmalade" . "https://marmalade-repo.org/packages/")
-                           ("org" . "http://orgmode.org/elpa/")))
+     (setq package-archives nil)
+     ;; Load packages from online
+     (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                              ("marmalade" . "https://marmalade-repo.org/packages/")
+                              ("melpa" . "https://melpa.org/packages/")
+                              ("org" . "http://orgmode.org/elpa/")))
 
-  (package-initialize)
+     (package-initialize)
 
-  (unless (package-installed-p 'use-package)
-    (package-refresh-contents)
-    (package-install 'use-package))
+     (unless (package-installed-p 'use-package)
+       (package-refresh-contents)
+       (package-install 'use-package))
 
-  (require 'use-package)
+     (require 'use-package)
 
-    (use-package try :ensure t)
+       (use-package try :ensure t)
    #+END_SRC
 *** Window Movement
     Nice way of selecting windows.

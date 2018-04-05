@@ -287,137 +287,140 @@ probably in-part because of this...
 
 
 #+BEGIN_SRC emacs-lisp
-(require 'cl)
+  (require 'cl)
 
-(defun multi-term-kill-all ()
-  "kills all multi-term processes with ctrl+c ctrl+d"
-  (interactive)
-  (defun is-useless-buffer (buffer)
-    (let ((name (buffer-name buffer)))
-      (and (= ?* (aref name 0)) (string-match "\*terminal<[0-9]+>\*" name))))
+  (defun multi-term-kill-all ()
+    "kills all multi-term processes with ctrl+c ctrl+d"
+    (interactive)
+    (defun is-useless-buffer (buffer)
+      (let ((name (buffer-name buffer)))
+        (and (= ?* (aref name 0)) (string-match "\*terminal<[0-9]+>\*" name))))
 
-  (loop for buffer being the buffers
-	do (and
-	    (is-useless-buffer buffer)
-	    (progn (switch-to-buffer buffer) (term-send-raw-string "\C-c") (term-send-raw-string "\C-d"))
-	    )
-	)
-  )
+    (loop for buffer being the buffers
+          do (and
+              (is-useless-buffer buffer)
+              (progn (switch-to-buffer buffer) (term-send-raw-string "\C-c") (term-send-raw-string "\C-d"))
+              )
+          )
+    )
 
 
-(defun find-first-file-in-directories-above (file)
-  (defun get-file-or-null (searching-directory)
-    (if (file-exists-p (expand-file-name file searching-directory))
-	(expand-file-name file searching-directory)
-      (if (string-equal searching-directory "/") nil
-	(get-file-or-null (replace-regexp-in-string "[^/]*/$" "" searching-directory))
-	)
+  (defun find-first-file-in-directories-above (file)
+    (defun reduce-directory (s) (replace-regexp-in-string "[^/]*/?$" "" s))
+    (defun get-file-or-null (searching-directory)
+      (if (not searching-directory) nil
+        (if (file-exists-p (expand-file-name file searching-directory))
+            (expand-file-name file searching-directory)
+          (if (or (string= searching-directory "/") (string= searching-directory "")) nil
+            (get-file-or-null (reduce-directory searching-directory))
+          )
+          )
+        )
       )
+    (get-file-or-null default-directory)
     )
-  (get-file-or-null default-directory)
-  )
 
-(defun multi-term-and-run (process-string)
-  "run a multi-term processes then run a command inside of it"
-  (multi-term)
-  (term-send-raw-string (concat process-string "\n"))
-  )
-
-
-
-(defun create-view ()
-  "creates the view for the current project"
-
-  (interactive)
-
-
-  (defun shrink-my-window-vertical (win cols)
-    (window-resize win (window-resizable win -10000))
-    (window-resize win (window-resizable win cols))
+  (defun multi-term-and-run (process-string)
+    "run a multi-term processes then run a command inside of it"
+    (multi-term)
+    (term-send-raw-string (concat process-string "\n"))
     )
-  (defun shrink-my-window-horizontal (win cols)
-    (window-resize win (window-resizable win -10000 t) t)
-    (window-resize win (window-resizable win cols t) t)
-    )
-  (defun shrink-my-window (win horizontal)
-    (if horizontal
-	(shrink-my-window-horizontal win 40)
-      (shrink-my-window-vertical win 10)
+
+
+
+  (defun create-view ()
+    "creates the view for the current project"
+
+    (interactive)
+
+
+    (defun shrink-my-window-vertical (win cols)
+      (window-resize win (window-resizable win -10000))
+      (window-resize win (window-resizable win cols))
       )
-    )
-
-
-  (defun generate-view-config-file ()
-    (message "No .view.el file was found. Making config view file...")
-    (find-file (expand-file-name ".view.el"))
-    (erase-buffer)
-    (insert-string "(setq project-script-commands '())")
-    (electric-newline-and-maybe-indent)
-    (insert-string "(setq project-files-to-open '())")
-    (previous-line)
-    (move-end-of-line)
-    (backward-char)
-    (backward-char)
-    )
-
-  (defun generate-view-from-file (config-file project-base-directory)
-    (load-file config-file)
-
-    (multi-term-kill-all)
-
-    (if (treemacs--is-visible?) (delete-window (treemacs--is-visible?)))
-    (delete-other-windows)
-    (when project-script-commands
-      (progn
-	(setq right (y-or-n-p "Put the terminals to the right? (default is bottom) "))
-	(delete-other-windows)
-	)
+    (defun shrink-my-window-horizontal (win cols)
+      (window-resize win (window-resizable win -10000 t) t)
+      (window-resize win (window-resizable win cols t) t)
       )
-    ;;(kill-matching-buffers "\*terminal<[0-9]*>\*")
-    (find-file project-base-directory)
-    (if (y-or-n-p "Use Treemacs? ") (progn (treemacs) (other-window 1)))
-
-
-
-    ;; split into user files and terminal view
-
-    (defun open-user-files (project-files-list)
-      "opens users files."
-      (when project-files-list
-	(find-file (car project-files-list))
-	(if (cdr project-files-list) (split-window-horizontally))
-	(other-window 1)
-	(open-user-files (cdr project-files-list))
-	)
-      )
-    ;; terminal windows
-    (defun create-terminals (cmds)
-      "creates terminals and stops 1 past last terminal"
-      (when cmds
-	(multi-term-and-run (concat (concat "cd " project-base-directory) (concat " && " (car cmds))))
-	(if (cdr cmds)
-	    (if right (split-window-vertically) (split-window-horizontally))
-	  (progn (balance-windows) (shrink-my-window (get-buffer-window) right))
-	  )
-	(other-window 1)
-	(create-terminals (cdr cmds))
-	)
+    (defun shrink-my-window (win horizontal)
+      (if horizontal
+          (shrink-my-window-horizontal win 40)
+        (shrink-my-window-vertical win 10)
+        )
       )
 
-    (when project-script-commands
-      (if right   (split-window-horizontally) (split-window-vertically))
+
+    (defun generate-view-config-file ()
+      (message "No .view.el file was found. Making config view file...")
+      (find-file (expand-file-name ".view.el"))
+      (erase-buffer)
+      (insert-string "(setq project-script-commands '())")
+      (electric-newline-and-maybe-indent)
+      (insert-string "(setq project-files-to-open '())")
+      (previous-line)
+      (move-end-of-line)
+      (backward-char)
+      (backward-char)
       )
-    (open-user-files project-files-to-open)
-    (create-terminals project-script-commands)
+
+    (defun generate-view-from-file (config-file project-base-directory)
+      (load-file config-file)
+
+      (multi-term-kill-all)
+
+      (if (treemacs--is-visible?) (delete-window (treemacs--is-visible?)))
+      (delete-other-windows)
+      (when project-script-commands
+        (progn
+          (setq right (y-or-n-p "Put the terminals to the right? (default is bottom) "))
+          (delete-other-windows)
+          )
+        )
+      ;;(kill-matching-buffers "\*terminal<[0-9]*>\*")
+      (find-file project-base-directory)
+      (if (y-or-n-p "Use Treemacs? ") (progn (treemacs) (other-window 1)))
+
+
+
+      ;; split into user files and terminal view
+
+      (defun open-user-files (project-files-list)
+        "opens users files."
+        (when project-files-list
+          (find-file (car project-files-list))
+          (if (cdr project-files-list) (split-window-horizontally))
+          (other-window 1)
+          (open-user-files (cdr project-files-list))
+          )
+        )
+      ;; terminal windows
+      (defun create-terminals (cmds)
+        "creates terminals and stops 1 past last terminal"
+        (when cmds
+          (multi-term-and-run (concat (concat "cd " project-base-directory) (concat " && " (car cmds))))
+          (if (cdr cmds)
+              (if right (split-window-vertically) (split-window-horizontally))
+            (progn (balance-windows) (shrink-my-window (get-buffer-window) right))
+            )
+          (other-window 1)
+          (create-terminals (cdr cmds))
+          )
+        )
+
+      (when project-script-commands
+        (if right   (split-window-horizontally) (split-window-vertically))
+        )
+      (open-user-files project-files-to-open)
+      (create-terminals project-script-commands)
+      )
+
+    (setq config-file (find-first-file-in-directories-above ".view.el"))
+    (if (not config-file) (generate-view-config-file)
+      (generate-view-from-file config-file
+                               (setq project-base-directory (replace-regexp-in-string "/[^/]*$" "" config-file))
+                               )
+      )
     )
 
-  (setq config-file (find-first-file-in-directories-above ".view.el"))
-  (if (not config-file) (generate-view-config-file)
-    (generate-view-from-file config-file
-			     (setq project-base-directory (replace-regexp-in-string "/[^/]*$" "" config-file))
-			     )
-    )
-  )
-
-(global-set-key (kbd "C-c v") 'create-view)
+  (global-set-key (kbd "C-c v") 'create-view)
 #+END_SRC

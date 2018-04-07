@@ -1,0 +1,20 @@
+#+TITLE: Portable Emacs
+
+My configuration for emacs. Feel free to use. The command files are compiled into this readme.
+
+* Installation instructions
+
+  This will erase previous init.el, so please back-up your emacs.d
+  before running this.
+
+#+BEGIN_SRC bash
+mkdir ~/.emacs.d
+cd ~/.emacs.d
+
+git clone https://github.com/acarrab/portableEmacs.git
+cd portableEmacs
+
+bash ./install.sh
+   #+END_SRC
+
+  You can still add settings to your init.el file as well.

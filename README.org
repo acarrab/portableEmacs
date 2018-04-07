@@ -1,12 +1,13 @@
 #+TITLE: Portable Emacs
-My configuration for emacs. Feel free to use. This was written with
-[[http://orgmode.org/worg/org-contrib/babel/][org-babel]] so that the init file can be encapsulated in the org mark-up
-language.
+
+My configuration for emacs. Feel free to use. The command files are compiled into this readme.
 
 * Installation instructions
-   This will erase previous init.el, so please back-up your emacs.d
-   before running this.
-   #+BEGIN_SRC bash
+
+  This will erase previous init.el, so please back-up your emacs.d
+  before running this.
+
+#+BEGIN_SRC bash
 mkdir ~/.emacs.d
 cd ~/.emacs.d
 
@@ -16,147 +17,249 @@ cd portableEmacs
 bash ./install.sh
    #+END_SRC
 
-You can still add settings to your init.el file as well.
+  You can still add settings to your init.el file as well.
 
+* Added keybindings
 
-* Configuration File
-# <configure start>
-** Static
+- ~M-y~   councel-yank-pop
+- ~C-s~   swiper
+- ~C-c C-r~   ivy-resume
+- ~M-x~   counsel-M-x
+- ~C-x C-f~   counsel-find-file
+- ~C-c g~   counsel-git
+- ~C-c j~   counsel-git-grep
+- ~C-c k~   counsel-ag
+- ~C-x l~   counsel-locate
+- ~C-S-o~   counsel-rhythmbox
+- ~C-r~   counsel-expression-history
+- ~C-c C-SPC~   company-complete
+- ~C-c l~   treemacs
+- ~C-c j~   ace-window
+- ~C-c c~   async-shell-command
+- ~C-c t~   run-term
+- ~C-c v~   create-view
 
-   This file contains things that do not normally change, it improves
-   the load time since this will be compiled automatically
+* src/defaults.el
 
-*** Emacs Package Manager
-   We need to tell emacs where to find packages that we may want to
-   download. Without this, it would be difficult to install new
-   processes. With the following package we can use the ":ensure t"
-   clause to ensure that the package will be installed if it doesn't yet
-   exist.
-
-   #+BEGIN_SRC emacs-lisp
-     (require 'package)
-   #+END_SRC
-
-   Adding things to the package repository
-
-   #+BEGIN_SRC emacs-lisp
-     (setq package-archives nil)
-     ;; Load packages from online
-     (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                              ("marmalade" . "https://marmalade-repo.org/packages/")
-                              ("melpa" . "https://melpa.org/packages/")
-                              ("org" . "http://orgmode.org/elpa/")))
-
-     (package-initialize)
-
-     (unless (package-installed-p 'use-package)
-       (package-refresh-contents)
-       (package-install 'use-package))
-
-     (require 'use-package)
-
-       (use-package try :ensure t)
-   #+END_SRC
-*** Window Movement
-    Nice way of selecting windows.
 #+BEGIN_SRC emacs-lisp
-  (use-package ace-window :ensure t)
+(require 'package)
+;; add package archives
+(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+			 ("marmalade" . "https://marmalade-repo.org/packages/")
+			 ("melpa" . "https://melpa.org/packages/")
+			 ("org" . "http://orgmode.org/elpa/")))
+
+(package-initialize)
+
+;; add short hand loading procedure for downloading things from repo's
+(unless (package-installed-p 'use-package) (package-refresh-contents) (package-install 'use-package))
+(require 'use-package)
 #+END_SRC
-*** Searching
-Gives key suggestions while typing key bindings
-**** which-key
+
+** Use emacs server to decrease load time when opening emacs a second time 
+
 #+BEGIN_SRC emacs-lisp
-  (use-package which-key
-    :ensure t
-    :config
-    (which-key-mode))
-  ;; Swiper addition with ivy
+(require 'server)
+(unless (server-running-p) (server-start))
 #+END_SRC
-**** ivy
-Finds you things
+
+** modern file manipulation 
+
 #+BEGIN_SRC emacs-lisp
-  (use-package counsel :ensure t)
-  (global-set-key (kbd "M-y") 'counsel-yank-pop)
+(use-package f :ensure t)
+(require 'f)
+
+;; adds new syntax
+(use-package try :ensure t)
 #+END_SRC
+
+** add in suggestions 
+
 #+BEGIN_SRC emacs-lisp
-  (use-package smex :ensure t)
-  (use-package swiper
-    :ensure try
-    :config
+(use-package which-key :ensure t :config (which-key-mode))
+#+END_SRC
+
+** add searching recommendations.. to everything 
+
+#+BEGIN_SRC emacs-lisp
+(use-package counsel :ensure t :bind ("M-y" . councel-yank-pop))
+(use-package smex :ensure t)
+(use-package swiper :ensure t
+  :config (progn
+	    (ivy-mode 1)
+	    (setq ivy-use-virtual-buffers t)
+	    )
+  :bind (("C-s" . swiper)
+	 ("C-c C-r" . ivy-resume)
+	 ("<f6>" . ivy-resume)
+	 ("M-x" . counsel-M-x)
+	 ("C-x C-f" . counsel-find-file)
+	 ("<f1> f" . counsel-describe-function)
+	 ("<f1> v" . counsel-describe-variable)
+	 ("<f1> l" . counsel-load-library)
+	 ("<f2> i" . counsel-info-lookup-symbol)
+	 ("<f2> u" . counsel-unicode-char)
+	 ("C-c g" . counsel-git)
+	 ("C-c j" . counsel-git-grep)
+	 ("C-c k" . counsel-ag)
+	 ("C-x l" . counsel-locate)
+	 ("C-S-o" . counsel-rhythmbox)
+	 :map read-expression-map
+	 ("C-r" .  counsel-expression-history))
+  )
+#+END_SRC
+
+* src/emacs-behavior.el
+
+#+BEGIN_SRC emacs-lisp
+(setq inhibit-startup-screen t)
+(setq inhibit-startup-message t)
+(setq ring-bell-function (lambda () ()))
+(setq visible-bell nil)
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+(require 're-builder)
+(setq reb-re-syntax 'string)
+#+END_SRC
+
+** fix inaccessible functions in shell for mac-os platform 
+
+#+BEGIN_SRC emacs-lisp
+(use-package exec-path-from-shell :ensure t)
+(when (memq window-system '(mac ns x)) (exec-path-from-shell-initialize))
+
+(setq backup-directory-alist
+      `(("." . ,(expand-file-name (concat user-emacs-directory "backups")))))
+(setq auto-save-file-name-transforms
+      `((".*" ,(expand-file-name (concat user-emacs-directory "autosaves")) t)))
+
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
+#+END_SRC
+
+* src/theme.el
+
+#+BEGIN_SRC emacs-lisp
+(use-package suscolors-theme :ensure t)
+(use-package gruvbox-theme :ensure t)
+
+(use-package smart-mode-line :ensure t :init (setq sml/theme 'dark)
+  :config (progn
+	    (setq sml/no-confirm-load-theme t)
+	    (sml/setup)
+	    (add-to-list 'sml/replacer-regexp-list '("g(.*)home/acarrab/" ":Palmetto:") t)
+	    (add-to-list 'sml/replacer-regexp-list  '("^~/Desktop/courses/\(\w+\)/"
+						      (lambda (s) (concat ":" (upcase (match-string 1 s)) ":")))
+			 t)
+	    (add-to-list 'sml/replacer-regexp-list  '("^~/Desktop/\(\w+\)/"
+						      (lambda (s) (concat ":" (upcase (match-string 1 s)) ":")))
+			 t)
+	    (setf rm-blacklist "[(company)(ivy)(WK)]")
+	    )
+  )
+#+END_SRC
+
+** Highlight matching parenthesis 
+
+#+BEGIN_SRC emacs-lisp
+(use-package highlight-parentheses :ensure t
+  :diminish highlight-parentheses-mode
+  :hook emacs-lisp-mode
+  :init (global-highlight-parentheses-mode)
+  )
+
+;; Color all delimiters
+(use-package rainbow-delimiters :ensure t)
+(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+
+(require 'rainbow-delimiters)
+
+(require 'org)
+
+(setq-default org-startup-with-inline-images t)
+(setq-default org-ellipsis " »")
+(setq-default org-todo-keyword-faces
+	      '(("TODO" . (:foreground "teal" :weight bold)) ("STARTED" . "yellow")
+		("DONE" . (:foreground "green" :weight bold))))
+(setq-default org-src-fontify-natively t)
+(setq-default org-src-tab-acts-natively t)
+(setq-default org-log-done 'time)
+
+(use-package org-bullets :ensure t
+  :hook (org-mode . org-bullets-mode)
+  :config (progn (setq org-bullets-face-name (quote org-bullet-face))
+		 (setq org-bullets-bullet-list '("◎" "✥" "❂" "✛" "✱" "✻" "⎈" "✛"))
+		 )
+  )
+
+(org-babel-do-load-languages 'org-babel-load-languages '((python . t) (latex . t)))
+(setq-default org-highlight-latex-and-related '(latex script entities))
+
+(if (display-graphic-p)
     (progn
-      (ivy-mode 1)
-      (setq ivy-use-virtual-buffers t)
-      (global-set-key "\C-s" 'swiper)
-      (global-set-key (kbd "C-c C-r") 'ivy-resume)
-      (global-set-key (kbd "<f6>") 'ivy-resume)
-      (global-set-key (kbd "M-x") 'counsel-M-x)
-      (global-set-key (kbd "C-x C-f") 'counsel-find-file)
-      (global-set-key (kbd "<f1> f") 'counsel-describe-function)
-      (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
-      (global-set-key (kbd "<f1> l") 'counsel-load-library)
-      (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
-      (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
-      (global-set-key (kbd "C-c g") 'counsel-git)
-      (global-set-key (kbd "C-c j") 'counsel-git-grep)
-      (global-set-key (kbd "C-c k") 'counsel-ag)
-      (global-set-key (kbd "C-x l") 'counsel-locate)
-      (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
-      (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
-      ))
-#+END_SRC
+      (use-package git-gutter-fringe :ensure t)
+      (require 'git-gutter-fringe)
 
-#+BEGIN_SRC emacs-lisp
-(defun ivy-show-kill-ring ()
-  (interactive)
-  (ivy-read "kill-ring: " (helm-kill-ring-candidates)
-            :action 'insert))
-#+END_SRC
-This is used in order to be able to query information about a command
-C-s C-o
-#+BEGIN_SRC emacs-lisp
-(use-package ivy-hydra :ensure t)
-#+END_SRC
-#+BEGIN_SRC emacs-lisp
-  ;;;;;;;;;;;;;;;;;;;;;;;; AutoComplete  ;;;;;;;;;;;;;;;;;;;;;;;;
-  (use-package auto-complete :ensure t :init)
-#+END_SRC
+      (setq-default left-fringe-width 20)
+      (setq-default right-fringe-width 20)
 
-*** Auto-complete
-#+BEGIN_SRC emacs-lisp
-  (use-package company :ensure t)
-  (add-hook 'after-init-hook 'global-company-mode)
-  (setq company-dabbrev-downcase nil)
-#+END_SRC
-*** Theme
-**** Add my theme in
-add gruvbox theme on top of suscolors
-#+BEGIN_SRC emacs-lisp
-  (use-package suscolors-theme :ensure t)
-  (use-package gruvbox-theme :ensure t)
-#+END_SRC
-This keeps emacs running in the background, so opening a new window
-does not take as long as a fresh start
-#+BEGIN_SRC emacs-lisp
-    (require 'server)
-    (unless (server-running-p)(server-start))
-#+END_SRC
-**** Add other theme Smart-mode-line
-#+BEGIN_SRC emacs-lisp
-  (use-package smart-mode-line :ensure t :init (setq sml/theme 'dark) :config (sml/setup)
-                                          ;(add-to-list 'sml/replacer-regexp-list '("^~/Desktop/courses/" ":CRS:") t)
-    (add-to-list 'sml/replacer-regexp-list '("g(.*)home/acarrab/" ":Palmetto:") t)
-    (add-to-list 'sml/replacer-regexp-list  '("^~/Desktop/courses/\\(\\w+\\)/"
-                                              (lambda (s) (concat ":" (upcase (match-string 1 s)) ":")))
-                 t)
-    (add-to-list 'sml/replacer-regexp-list  '("^~/Desktop/\\(\\w+\\)/"
-                                              (lambda (s) (concat ":" (upcase (match-string 1 s)) ":")))
-                 t)
-    (setf rm-blacklist "[\(company\)\(ivy\)\(WK\)]")
+      (global-git-gutter-mode +1)
+      (add-hook 'find-file-hook 'linum-mode)
+      )
+  (progn
+    (use-package git-gutter :ensure t)
+    (require 'git-gutter)
+    (global-git-gutter-mode +1)
+    (git-gutter:linum-setup)
+    (custom-set-variables
+     '(git-gutter:modified-sign "  ") ;; two space
+     '(git-gutter:added-sign "++")    ;; multiple character is OK
+     '(git-gutter:deleted-sign "--"))
+    (set-face-background 'git-gutter:modified "purple") ;; background color
+    (set-face-foreground 'git-gutter:added "green")
+    (set-face-foreground 'git-gutter:deleted "red")
     )
-#+END_SRC
-**** Add org-block coloring
+  )
 
-#+BEGIN_SRC emacs-lisp
+(use-package spaceline :ensure t
+  :init (progn
+	  (spaceline-emacs-theme)
+	  (spaceline-info-mode)
+	  )
+  )
+
+(when (window-system)
+  (set-default-font "Fira Code"))
+(let ((alist '((33 . ".\(?:\(?:==\|!!\)\|[!=]\)")
+               (35 . ".\(?:###\|##\|_(\|[#(?[_{]\)")
+               (36 . ".\(?:>\)")
+               (37 . ".\(?:\(?:%%\)\|%\)")
+               (38 . ".\(?:\(?:&&\)\|&\)")
+               (42 . ".\(?:\(?:\*\*/\)\|\(?:\*[*/]\)\|[*/>]\)")
+	       ;; crashes cpp mode: (43 . ".\(?:\(?:\+\+\)\|[+>]\)")
+	       ;; crashes eshell:   (45 . ".\(?:\(?:-[>-]\|<<\|>>\)\|[<>}~-]\)")
+	       ;; hasn't crashed yet, reported to crash with helm integration:  (46 . ".\(?:\(?:\.[.<]\)\|[.=-]\)")
+	       ;; crashes cpp mode: (47 . ".\(?:\(?:\*\*\|//\|==\)\|[*/=>]\)")
+               (48 . ".\(?:x[a-zA-Z]\)")
+               (58 . ".\(?:::\|[:=]\)")
+               (59 . ".\(?:;;\|;\)")
+               (60 . ".\(?:\(?:!--\)\|\(?:~~\|->\|\$>\|\*>\|\+>\|--\|<[<=-]\|=[<=>]\||>\)\|[*$+~/<=>|-]\)")
+               (61 . ".\(?:\(?:/=\|:=\|<<\|=[=>]\|>>\)\|[<=>~]\)")
+               (62 . ".\(?:\(?:=>\|>[=>-]\)\|[=>-]\)")
+               (63 . ".\(?:\(\?\?\)\|[:=?]\)")
+               (91 . ".\(?:]\)")
+               (92 . ".\(?:\(?:\\\\\)\|\\\)")
+               (94 . ".\(?:=\)")
+               (119 . ".\(?:ww\)")
+               (123 . ".\(?:-\)")
+               (124 . ".\(?:\(?:|[=|]\)\|[=>|]\)")
+               (126 . ".\(?:~>\|~~\|[>=@~-]\)")
+               )
+             ))
+  (dolist (char-regexp alist)
+    (set-char-table-range composition-function-table (car char-regexp)
+                          `([,(cdr char-regexp) 0 font-shape-gstring]))))
+
   (let ((class '((class color) (min-colors 89)))
         ;; Palette colors.
         (yellow-1 "#fce94f") (yellow-2 "#ffd700") (yellow-3 "#c4a000") (yellow-3-5 "#aaaa11") (yellow-4 "#875f00")
@@ -181,7 +284,6 @@ does not take as long as a fresh start
         (linum-dark "#87875f") (linum-light "#d7d7af")
         )
 
-
     (custom-theme-set-faces
      'suscolors
 
@@ -195,598 +297,262 @@ does not take as long as a fresh start
      `(org-block-begin-line ((,class (:foreground ,white-0 :background ,cyan-6))))
      `(org-block-end-line ((,class (:foreground ,black-3 :background nil))))
      )
+    )
+#+END_SRC
+
+* src/tools.el
+
+#+BEGIN_SRC emacs-lisp
+(use-package flycheck :ensure t
+  :init (global-flycheck-mode)
   )
 #+END_SRC
 
-#+RESULTS:
-**** Org Additions
-This adds the nicer bullets to org mode.
-#+BEGIN_SRC emacs-lisp
-  (use-package org-bullets
-    :ensure t
-    :config
-    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-#+END_SRC
-Change bullet types
-#+BEGIN_SRC emacs-lisp
-  (setq org-bullets-face-name (quote org-bullet-face))
-  (setq org-bullets-bullet-list '("◎" "✥" "❂" "✛" "✱" "✻" "⎈" "✛"))
-#+END_SRC
-
-Change ellipsis
-#+BEGIN_SRC emacs-lisp
-  (setq org-startup-with-inline-images t)
-  (setq org-ellipsis " »");;⚡");; ⬎")
-#+END_SRC
-
-Change todo color
-#+BEGIN_SRC emacs-lisp
-(setq org-todo-keyword-faces
-      '(("TODO" . (:foreground "teal" :weight bold)) ("STARTED" . "yellow")
-        ("DONE" . (:foreground "green" :weight bold))))
-#+END_SRC
-
-Generic org mode settings for startup
-#+BEGIN_SRC emacs-lisp
-  (setq org-log-done 'time)
-#+END_SRC
-
-Adding in more babel
-#+BEGIN_SRC emacs-lisp
-  (setq org-src-fontify-natively t)
-  (setq org-src-tab-acts-natively t)
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((python . t)))
-
-
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((latex . t)))
-#+END_SRC
-
-Some latex within org syntax highlighting
-#+BEGIN_SRC emacs-lisp
-(setq org-highlight-latex-and-related '(latex script entities))
-#+END_SRC
-
-**** highlighting parentheses
-#+BEGIN_SRC emacs-lisp
-  (use-package highlight-parentheses
-    :ensure t
-    :diminish highlight-parentheses-mode
-    :config
-    (add-hook 'emacs-lisp-mode-hook
-              (lambda() (highlight-parentheses-mode))))
-  (global-highlight-parentheses-mode)
-#+END_SRC
-**** fancy delimiters
-#+BEGIN_SRC emacs-lisp
-  (use-package rainbow-delimiters    :ensure t )
-  (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
-  (require 'rainbow-delimiters)
-#+END_SRC
-
-*** Re-builder
-Make regex builder have the same format as the regex for search and replace
-#+BEGIN_SRC emacs-lisp
-  (require 're-builder)
-  (setq reb-re-syntax 'string)
-#+END_SRC
-
-*** Treemacs
-#+BEGIN_SRC emacs-lisp
-(use-package treemacs :ensure t)
-(global-set-key (kbd "C-c l") 'treemacs)
-#+END_SRC
-
-*** Startup
-#+BEGIN_SRC emacs-lisp
-  (setq inhibit-startup-screen t)
-  (setq inhibit-startup-message t)
-#+END_SRC
-*** Get rid of bell in emacs 25
-#+BEGIN_SRC emacs-lisp
-  (defun my-bell-function())
-  (setq ring-bell-function 'my-bell-function)
-  (setq visible-bell nil)
-#+END_SRC
-*** Trailing whitespace
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'before-save-hook 'delete-trailing-whitespace)
-#+END_SRC
-
-*** Languages
-**** Python
-#+BEGIN_SRC emacs-lisp
-  ;;----------- Python additions ------------
-  (use-package anaconda-mode :ensure t)
-  ;;----------- IPython! --------------------
-  (use-package ein  :ensure t)
-  ;;------------ Fix python imports with ----
-  (use-package importmagic :ensure t)
-  ;;------------ Setting to ide -------------
-  (use-package virtualenv :ensure t)
-  (use-package edit-server :ensure t)
-  (use-package jedi :ensure t)
-#+END_SRC
-**** cpp
-#+BEGIN_SRC emacs-lisp
-  (setq auto-mode-alist (append '(("\\.h$" . c++-mode))
-                                auto-mode-alist))
-#+END_SRC
-**** Website Development
-     Combines javascript and html editing so that things will be segmented properly.
-#+BEGIN_SRC emacs-lisp
-(use-package web-mode :ensure t)
-
-(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-;; others
-(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.php\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
-
-#+END_SRC
-***** Laravel Specific
-#+BEGIN_SRC emacs-lisp
-(use-package php-mode :ensure t)
-(add-to-list 'auto-mode-alist '("\\artisan\\'" . php-mode))
-
-#+END_SRC
-
-*** yasnippet
-include yasnippets for nice snippets
-#+BEGIN_SRC emacs-lisp
-  (use-package yasnippet :ensure t)
-  (yas-global-mode 1)
-  (use-package yasnippet-snippets :ensure t)
-
-#+END_SRC
-
-*** Install async mode
-#+BEGIN_SRC emacs-lisp
-(use-package async :ensure t)
-#+END_SRC
-
-#+OPTIONS: H:5 num:nil tags:nil timestamps:t
-** Experimental
-   This file contains properties that may often change, which would cause recompilation
-*** f.el
-#+BEGIN_SRC emacs-lisp
-(use-package f :ensure t)
-(require 'f)
-#+END_SRC
-*** Fix inaccessible functions on Mac-osx platform
-This seems to fix the problem!
-#+BEGIN_SRC emacs-lisp
-(use-package exec-path-from-shell :ensure t)
-(when (memq window-system '(mac ns x))
-  (exec-path-from-shell-initialize))
-
-
-#+END_SRC
-*** Javascript indentation
+** Auto-complete 
 
 #+BEGIN_SRC emacs-lisp
-(setq js2-basic-offset 2)
+(use-package company :ensure t :init (global-company-mode)
+  :config (defvar company-dabbrev-downcase)
+  :bind ("C-c C-SPC" . company-complete))
 #+END_SRC
-*** Typescript
-**** Tide
+
+** displays files in current directory in nice way 
+
 #+BEGIN_SRC emacs-lisp
-  ;;(use-package flycheck :ensure t)
-  (use-package tide :ensure t)
-  (use-package typescript :ensure t)
-  (defun setup-tide-mode ()
-    (interactive)
-    (tide-setup)
-    (flycheck-mode +1)
-    (setq flycheck-check-syntax-automatically '(save mode-enabled))
-    (eldoc-mode +1)
-    (tide-hl-identifier-mode +1)
-    ;; company is an optional dependency. You have to
-    ;; install it separately via package-install
-    ;; `M-x package-install [ret] company`
-    (company-mode +1)
-    )
-
-
-
-  ;; aligns annotation to the right hand side
-  (setq company-tooltip-align-annotations t)
-
-  ;; formats the buffer before saving
-  (add-hook 'before-save-hook 'tide-format-before-save)
-
-  (add-hook 'typescript-mode-hook #'setup-tide-mode)
+(use-package treemacs :ensure t :bind ("C-c l" . treemacs))
 #+END_SRC
-**** Tsx
+
+** moving around windows in emacs 
+
 #+BEGIN_SRC emacs-lisp
-  (require 'web-mode)
-  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
-  (add-hook 'web-mode-hook
-            (lambda ()
-              (when (string-equal "tsx" (file-name-extension buffer-file-name))
-                (setup-tide-mode))))
-  (require 'flycheck)
-
-
-
-  ;; enable typescript-tslint checker
-  (flycheck-add-mode 'typescript-tslint 'web-mode)
-#+END_SRC
-**** Company Key binding C-c C-SPC
-#+BEGIN_SRC
-  (eval-after-load "tide-mode"
-    '(define-key tide-mode-map (kbd "C-c C-SPC") 'company-tide))
+(use-package ace-window :ensure t :bind ("C-c j" . ace-window))
 #+END_SRC
 
-**** Format Options
+** improves ability to type repetitive code segments quickly 
+
 #+BEGIN_SRC emacs-lisp
-  (setq tide-format-options
-        '(:insertSpaceAfterFunctionKeywordForAnonymousFunctions t :placeOpenBraceOnNewLineForFunctions nil)
-        )
+(use-package yasnippet :ensure t :init (yas-global-mode 1))
+(use-package yasnippet-snippets :ensure t)
 #+END_SRC
-**** Keybindings
-#+BEGIN_SRC
-  (defun my-tide-config ()
-    "add keybindings that activate when using tide-mode"
-    (local-set-key (kbd "C-c C-SPC") 'company-tide)
+
+** allows for asynchronous file copy/move mostly with dired mode 
+
+#+BEGIN_SRC emacs-lisp
+(use-package async :ensure t :bind ("C-c c" . async-shell-command))
+
+(use-package multi-term :ensure t
+  :init (progn
+	  (setenv "SHELL" "/bin/zsh")
+	  (setq-default explicit-shell-file-name "/bin/zsh")
+
+	  (defun run-term ()
+	    "Creates multi-term terminal in current window."
+	    (interactive)
+	    (multi-term)
+	    (setq-default truncate-lines nil)
+	    )
+	  )
+  :bind ("C-c t" . run-term)
   )
-  (add-hook 'tide-mode-hook 'my-tide-config)
-
-#+END_SRC
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-c C-SPC") 'company-complete)
-
 #+END_SRC
 
-*** Palmetto Cluster Specific
+* src/project-views.el
 
 #+BEGIN_SRC emacs-lisp
-  (defun flip()
-    "flips directory to other and opens dired mode"
-    (interactive)
-    (dired
-     (if (eq 0 (string-match "\\(/scratch3/acarrab/\\)" (expand-file-name default-directory)))
-         (replace-regexp-in-string "/scratch3/" "/zfs/safrolab/users/" (expand-file-name default-directory))
-       (replace-regexp-in-string "/zfs/safrolab/users/" "/scratch3/" (expand-file-name default-directory))
-       )
-     ))
+(require 'cl)
 
-  (defun qstat ()
-    "Get my active jobs"
-    (interactive)
-    (message (shell-command-to-string "qstat -u acarrab")))
+(defun multi-term-kill-all ()
+  "Kill all multi-term processes with ctrl+c ctrl+d."
+  (interactive)
+  (defun is-useless-buffer (buffer)
+    (let ((name (buffer-name buffer)))
+      (and (= ?* (aref name 0)) (string-match "*terminal<[0-9]+>*" name))))
 
-  (defun whatsfree ()
-    "Get list of  what nodes are free"
-    (interactive)
-    (message (shell-command-to-string "whatsfree")))
-
-                                          ; (defun qsub ()
-                                          ;   "Get my active jobs"
-                                          ;   (interactive)
-                                          ;   (message (shell-command-to-string "whatsfree")))
-#+END_SRC
-
-*** moving autosave directory to .emacs.d/saves
-#+BEGIN_SRC emacs-lisp
-  (setq backup-directory-alist
-        `(("." . ,(expand-file-name (concat user-emacs-directory "backups")))))
-  (setq auto-save-file-name-transforms
-        `((".*" ,(expand-file-name (concat user-emacs-directory "autosaves")) t)))
-
-#+END_SRC
-
-*** Multi-term
-#+BEGIN_SRC emacs-lisp
-    ;;(setq-default explicit-shell-file-name "/bin/zsh")
-    ;;(setq-default shell-file-name "/bin/zsh")
-    ;; some other multi-term line was here...
-    (setenv "SHELL" "/bin/zsh")
-    (setq explicit-shell-file-name "/bin/zsh")
-
-
-    (use-package multi-term :ensure t)
-    (defun run-term ()
-      (interactive)
-      (command-execute 'multi-term)
-      (setq-default truncate-lines nil)
-      )
-
-
-
-    (global-set-key (kbd "C-c t") 'run-term)
-
-
-
-
-
-#+END_SRC
-
-*** Shortcut for toggling filelock
-
-#+BEGIN_SRC emacs-lisp
-  ;;(setq create-lockfiles nil)
-#+END_SRC
-*** Adds ability to expand window in group
-    I wrote this code to expand the current buffers window so that you can see more of the code if needed
-#+BEGIN_SRC emacs-lisp
-  (setq window-shrink-columns 20)
-  (setq window-shrink-rows 10)
-
-  (defun focus-shrink-all-other-windows ()
-    "expands window in current group"
-    (interactive)
-
-
-    (defun go-to-windows (win nxt)
-      "returns a string with all window widths in current row"
-      (if (not (eq win nil))
-          (progn
-            (funcall
-             (lambda (win)
-               (if (window-combined-p)
-                   (nprogn
-                     (window-resize win (window-resizable win -10000))
-                     (window-resize win (window-resizable win window-shrink-rows))
-                     )
-                 (progn
-                   (window-resize win (window-resizable win -10000 t) t)
-                   (window-resize win (window-resizable win window-shrink-columns t) t)
-                   )
-                 )
-               )
-             win
-             )
-            (go-to-windows (funcall nxt win) nxt)
-            )
-        )
-      )
-
-
-    (go-to-windows (window-prev-sibling) (lambda (x) (window-prev-sibling x)))
-    (go-to-windows (window-next-sibling) (lambda (x) (window-next-sibling x)))
-    )
-
-   (global-set-key (kbd "C-c f") 'focus-shrink-all-other-windows)
-#+END_SRC
-*** git-gutter
-#+BEGIN_SRC emacs-lisp
-
-  (if (display-graphic-p)
-      (progn
-	(use-package git-gutter-fringe :ensure t)
-	(require 'git-gutter-fringe)
-
-	(setq-default left-fringe-width 20)
-	(setq-default right-fringe-width 20)
-
-	(global-git-gutter-mode +1)
-	(add-hook 'find-file-hook 'linum-mode)
+  (loop for buffer being the buffers
+	do (and
+	    (is-useless-buffer buffer)
+	    (progn (switch-to-buffer buffer) (term-send-raw-string "C-c") (term-send-raw-string "C-d"))
+	    )
 	)
-    (progn
-      (use-package git-gutter :ensure t)
-      (require 'git-gutter)
-      (global-git-gutter-mode +1)
-      (git-gutter:linum-setup)
-      (custom-set-variables
-       '(git-gutter:modified-sign "  ") ;; two space
-       '(git-gutter:added-sign "++")    ;; multiple character is OK
-       '(git-gutter:deleted-sign "--"))
-      (set-face-background 'git-gutter:modified "purple") ;; background color
-      (set-face-foreground 'git-gutter:added "green")
-      (set-face-foreground 'git-gutter:deleted "red")
+  )
+
+(defun find-first-file-in-directories-above (file)
+  "Return FILE in current or above directory."
+  (defun reduce-directory (s) (replace-regexp-in-string "[^/]*/?$" "" s))
+  (defun get-file-or-null (searching-directory)
+    (if (not searching-directory) nil
+      (if (file-exists-p (expand-file-name file searching-directory))
+	  (expand-file-name file searching-directory)
+	(if (or (string= searching-directory "/") (string= searching-directory "")) nil
+	  (get-file-or-null (reduce-directory searching-directory))
+          )
+	)
+      )
+    )
+  (get-file-or-null default-directory)
+  )
+
+(defun multi-term-and-run (process-string)
+  "Run a multi-term processes then run PROCESS-STRING command inside of it."
+  (multi-term)
+  (term-send-raw-string (concat process-string "n"))
+  )
+
+(defun create-view ()
+  "Create default view for the current project."
+
+  (interactive)
+
+  (defun shrink-my-window-vertical (win cols)
+    (window-resize win (window-resizable win -10000))
+    (window-resize win (window-resizable win cols))
+    )
+  (defun shrink-my-window-horizontal (win cols)
+    (window-resize win (window-resizable win -10000 t) t)
+    (window-resize win (window-resizable win cols t) t)
+    )
+  (defun shrink-my-window (win horizontal)
+    (if horizontal
+	(shrink-my-window-horizontal win 40)
+      (shrink-my-window-vertical win 10)
       )
     )
 
+  (defun generate-view-config-file ()
+    (message "No .view.el file was found. Making config view file...")
+    (find-file (expand-file-name ".view.el"))
+    (erase-buffer)
+    (insert "(setq project-script-commands '())")
+    (newline nil)
+    (insert "(setq project-files-to-open '())")
+    (forward-line -1)
+    (move-end-of-line nil)
+    (backward-char)
+    (backward-char)
+    )
+
+  (defun generate-view-from-file (config-file project-base-directory)
+    (load-file config-file)
+
+    (multi-term-kill-all)
+
+    (if (treemacs--is-visible?) (delete-window (treemacs--is-visible?)))
+    (delete-other-windows)
+    (when project-script-commands
+      (progn
+	(setq right (y-or-n-p "Put the terminals to the right (default is bottom)? "))
+	(delete-other-windows)
+	)
+      )
+    ;;(kill-matching-buffers "*terminal<[0-9]*>*")
+    (find-file project-base-directory)
+    (if (y-or-n-p "Use Treemacs? ") (progn (treemacs) (other-window 1)))
+
+    ;; split into user files and terminal view
+
+    (defun open-user-files (project-files-list)
+      "opens users files."
+      (when project-files-list
+	(find-file (car project-files-list))
+	(if (cdr project-files-list) (split-window-horizontally))
+	(other-window 1)
+	(open-user-files (cdr project-files-list))
+	)
+      )
+    ;; terminal windows
+    (defun create-terminals (cmds)
+      "creates terminals and stops 1 past last terminal"
+      (when cmds
+	(multi-term-and-run (concat (concat "cd " project-base-directory) (concat " && " (car cmds))))
+	(if (cdr cmds)
+	    (if right (split-window-vertically) (split-window-horizontally))
+	  (progn (balance-windows) (shrink-my-window (get-buffer-window) right))
+	  )
+	(other-window 1)
+	(create-terminals (cdr cmds))
+	)
+      )
+
+    (when project-script-commands
+      (if right   (split-window-horizontally) (split-window-vertically))
+      )
+    (open-user-files project-files-to-open)
+    (create-terminals project-script-commands)
+    )
+
+  (setq config-file (find-first-file-in-directories-above ".view.el"))
+  (if (not config-file) (generate-view-config-file)
+    (generate-view-from-file config-file
+			     (setq project-base-directory (replace-regexp-in-string "/[^/]*$" "" config-file))
+			     )
+    )
+  )
+
+(global-set-key (kbd "C-c v") 'create-view)
 #+END_SRC
-*** FiraCode with ligatures
 
-This has been a disappointment, it crashes at so many points with so
-many different features within emacs. When something crashes, it is
-probably in-part because of this...
-
+* src/languages/webdev.el
 
 #+BEGIN_SRC emacs-lisp
-(when (window-system)
-  (set-default-font "Fira Code"))
-(let ((alist '((33 . ".\\(?:\\(?:==\\|!!\\)\\|[!=]\\)")
-               (35 . ".\\(?:###\\|##\\|_(\\|[#(?[_{]\\)")
-               (36 . ".\\(?:>\\)")
-               (37 . ".\\(?:\\(?:%%\\)\\|%\\)")
-               (38 . ".\\(?:\\(?:&&\\)\\|&\\)")
-               (42 . ".\\(?:\\(?:\\*\\*/\\)\\|\\(?:\\*[*/]\\)\\|[*/>]\\)")
-;; crashes cpp mode: (43 . ".\\(?:\\(?:\\+\\+\\)\\|[+>]\\)")
-;; crashes eshell:   (45 . ".\\(?:\\(?:-[>-]\\|<<\\|>>\\)\\|[<>}~-]\\)")
-;; hasn't crashed yet, reported to crash with helm integration:  (46 . ".\\(?:\\(?:\\.[.<]\\)\\|[.=-]\\)")
-;; crashes cpp mode: (47 . ".\\(?:\\(?:\\*\\*\\|//\\|==\\)\\|[*/=>]\\)")
-               (48 . ".\\(?:x[a-zA-Z]\\)")
-               (58 . ".\\(?:::\\|[:=]\\)")
-               (59 . ".\\(?:;;\\|;\\)")
-               (60 . ".\\(?:\\(?:!--\\)\\|\\(?:~~\\|->\\|\\$>\\|\\*>\\|\\+>\\|--\\|<[<=-]\\|=[<=>]\\||>\\)\\|[*$+~/<=>|-]\\)")
-               (61 . ".\\(?:\\(?:/=\\|:=\\|<<\\|=[=>]\\|>>\\)\\|[<=>~]\\)")
-               (62 . ".\\(?:\\(?:=>\\|>[=>-]\\)\\|[=>-]\\)")
-               (63 . ".\\(?:\\(\\?\\?\\)\\|[:=?]\\)")
-               (91 . ".\\(?:]\\)")
-               (92 . ".\\(?:\\(?:\\\\\\\\\\)\\|\\\\\\)")
-               (94 . ".\\(?:=\\)")
-               (119 . ".\\(?:ww\\)")
-               (123 . ".\\(?:-\\)")
-               (124 . ".\\(?:\\(?:|[=|]\\)\\|[=>|]\\)")
-               (126 . ".\\(?:~>\\|~~\\|[>=@~-]\\)")
-               )
-             ))
-  (dolist (char-regexp alist)
-    (set-char-table-range composition-function-table (car char-regexp)
-                          `([,(cdr char-regexp) 0 font-shape-gstring]))))
+(use-package flycheck :ensure t)
+(use-package typescript :ensure t)
+(use-package tide :ensure t
+  :init (flycheck-add-mode 'typescript-tslint 'web-mode)
+  :hook '((typescript-mode-hook . tide-mode)
+	  (before-save-hook . tide-format-before-save))
+  )
+
+(defun setup-tide-mode ()
+  "Activates tide mode with additional configuration."
+  (tide-setup)
+  (flycheck-mode +1)
+  (setq-default flycheck-check-syntax-automatically '(save mode-enabled))
+  (eldoc-mode +1)
+  (tide-hl-identifier-mode +1)
+  ;; company is an optional dependency. You have to
+  ;; install it separately via package-install
+  ;; `M-x package-install [ret] company`
+  (company-mode +1)
+  )
+(defun setup-tide-mode-when-tsx ()
+  "Activates tide mode with tsx configuration."
+  (when (string-equal "tsx" (file-name-extension buffer-file-name))
+    (setup-tide-mode))
+  )
+
+(use-package web-mode :ensure t
+  :init (progn
+	  (add-to-list 'auto-mode-alist '("\.html?\'" . web-mode))
+	  (add-to-list 'auto-mode-alist '("\.phtml\'" . web-mode))
+	  (add-to-list 'auto-mode-alist '("\.php\'" . web-mode))
+	  (add-to-list 'auto-mode-alist '("\.tpl\.php\'" . web-mode))
+	  (add-to-list 'auto-mode-alist '("\.[agj]sp\'" . web-mode))
+	  (add-to-list 'auto-mode-alist '("\.as[cp]x\'" . web-mode))
+	  (add-to-list 'auto-mode-alist '("\.erb\'" . web-mode))
+	  (add-to-list 'auto-mode-alist '("\.mustache\'" . web-mode))
+	  (add-to-list 'auto-mode-alist '("\.djhtml\'" . web-mode))
+	  (add-to-list 'auto-mode-alist '("\.tsx\'" . web-mode))
+	  )
+  )
+
+(setq company-tooltip-align-annotations t)
+
+(add-hook 'typescript-mode-hook #'setup-tide-mode)
 #+END_SRC
 
-*** User space configuration
-
-    This sets up a view for a project file.
-
-    If you want to use,
-    1. create a file called ~.view.el~ in the root of your project directory
-    2. put the command with whatever terminal commands you want
-       ~(setq project-script-commands '("echo terminal command 1" "echo terminal command 2" "echo terminal command 3")~
-    3. run ~create-view~
-       For me it is bount to ~C-c v~
-
-
-
+* src/languages/python.el
 
 #+BEGIN_SRC emacs-lisp
-  (require 'cl)
-
-  (defun multi-term-kill-all ()
-    "kills all multi-term processes with ctrl+c ctrl+d"
-    (interactive)
-    (defun is-useless-buffer (buffer)
-      (let ((name (buffer-name buffer)))
-        (and (= ?* (aref name 0)) (string-match "\*terminal<[0-9]+>\*" name))))
-
-    (loop for buffer being the buffers
-          do (and
-              (is-useless-buffer buffer)
-              (progn (switch-to-buffer buffer) (term-send-raw-string "\C-c") (term-send-raw-string "\C-d"))
-              )
-          )
-    )
-
-
-  (defun find-first-file-in-directories-above (file)
-    (defun reduce-directory (s) (replace-regexp-in-string "[^/]*/?$" "" s))
-    (defun get-file-or-null (searching-directory)
-      (if (not searching-directory) nil
-        (if (file-exists-p (expand-file-name file searching-directory))
-            (expand-file-name file searching-directory)
-          (if (or (string= searching-directory "/") (string= searching-directory "")) nil
-            (get-file-or-null (reduce-directory searching-directory))
-          )
-          )
-        )
-      )
-    (get-file-or-null default-directory)
-    )
-
-  (defun multi-term-and-run (process-string)
-    "run a multi-term processes then run a command inside of it"
-    (multi-term)
-    (term-send-raw-string (concat process-string "\n"))
-    )
-
-
-
-  (defun create-view ()
-    "creates the view for the current project"
-
-    (interactive)
-
-
-    (defun shrink-my-window-vertical (win cols)
-      (window-resize win (window-resizable win -10000))
-      (window-resize win (window-resizable win cols))
-      )
-    (defun shrink-my-window-horizontal (win cols)
-      (window-resize win (window-resizable win -10000 t) t)
-      (window-resize win (window-resizable win cols t) t)
-      )
-    (defun shrink-my-window (win horizontal)
-      (if horizontal
-          (shrink-my-window-horizontal win 40)
-        (shrink-my-window-vertical win 10)
-        )
-      )
-
-
-    (defun generate-view-config-file ()
-      (message "No .view.el file was found. Making config view file...")
-      (find-file (expand-file-name ".view.el"))
-      (erase-buffer)
-      (insert-string "(setq project-script-commands '())")
-      (electric-newline-and-maybe-indent)
-      (insert-string "(setq project-files-to-open '())")
-      (previous-line)
-      (move-end-of-line)
-      (backward-char)
-      (backward-char)
-      )
-
-    (defun generate-view-from-file (config-file project-base-directory)
-      (load-file config-file)
-
-      (multi-term-kill-all)
-
-      (if (treemacs--is-visible?) (delete-window (treemacs--is-visible?)))
-      (delete-other-windows)
-      (when project-script-commands
-        (progn
-          (setq right (y-or-n-p "Put the terminals to the right? (default is bottom) "))
-          (delete-other-windows)
-          )
-        )
-      ;;(kill-matching-buffers "\*terminal<[0-9]*>\*")
-      (find-file project-base-directory)
-      (if (y-or-n-p "Use Treemacs? ") (progn (treemacs) (other-window 1)))
-
-
-
-      ;; split into user files and terminal view
-
-      (defun open-user-files (project-files-list)
-        "opens users files."
-        (when project-files-list
-          (find-file (car project-files-list))
-          (if (cdr project-files-list) (split-window-horizontally))
-          (other-window 1)
-          (open-user-files (cdr project-files-list))
-          )
-        )
-      ;; terminal windows
-      (defun create-terminals (cmds)
-        "creates terminals and stops 1 past last terminal"
-        (when cmds
-          (multi-term-and-run (concat (concat "cd " project-base-directory) (concat " && " (car cmds))))
-          (if (cdr cmds)
-              (if right (split-window-vertically) (split-window-horizontally))
-            (progn (balance-windows) (shrink-my-window (get-buffer-window) right))
-            )
-          (other-window 1)
-          (create-terminals (cdr cmds))
-          )
-        )
-
-      (when project-script-commands
-        (if right   (split-window-horizontally) (split-window-vertically))
-        )
-      (open-user-files project-files-to-open)
-      (create-terminals project-script-commands)
-      )
-
-    (setq config-file (find-first-file-in-directories-above ".view.el"))
-    (if (not config-file) (generate-view-config-file)
-      (generate-view-from-file config-file
-                               (setq project-base-directory (replace-regexp-in-string "/[^/]*$" "" config-file))
-                               )
-      )
-    )
-
-  (global-set-key (kbd "C-c v") 'create-view)
+(use-package anaconda-mode :ensure t)
+(use-package ein  :ensure t)
+(use-package importmagic :ensure t)
+(use-package virtualenv :ensure t)
+(use-package edit-server :ensure t)
+(use-package jedi :ensure t)
 #+END_SRC
-# <configure end>
 
+* src/languages/cpp.el
 
-
-
-
-
-
-
-
-
+#+BEGIN_SRC emacs-lisp
+(setq auto-mode-alist (append '(("\.h$" . c++-mode)) auto-mode-alist))
+#+END_SRC

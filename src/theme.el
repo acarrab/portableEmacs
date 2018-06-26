@@ -25,11 +25,7 @@
 
 
 ;; Highlight matching parenthesis ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(use-package highlight-parentheses :ensure t
-  :diminish highlight-parentheses-mode
-  :hook emacs-lisp-mode
-  :init (global-highlight-parentheses-mode)
-  )
+(show-paren-mode 1)
 
 ;; Color all delimiters
 (use-package rainbow-delimiters :ensure t)

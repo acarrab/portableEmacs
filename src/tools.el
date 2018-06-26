@@ -44,7 +44,7 @@
   :bind ("C-c t" . run-term)
   )
 
-
+(use-package magit :ensure t)
 
 (provide 'src/tools)
 ;;; tools.el ends here

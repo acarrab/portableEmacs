@@ -35,7 +35,7 @@
 (use-package counsel :ensure t :bind ("M-y" . councel-yank-pop))
 (use-package smex :ensure t)
 (use-package swiper :ensure t
-  :config (progn
+  :init (progn
 	    (ivy-mode 1)
 	    (setq ivy-use-virtual-buffers t)
 	    )

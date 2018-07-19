@@ -15,7 +15,6 @@
 (setq portable-emacs-load-order '("src/defaults.el"
 				  "src/emacs-behavior.el"
 				  "src/theme.el"
-				  "src/fira.el"
 				  "src/tools.el"
 				  "src/project-views.el"
 				  "src/languages/webdev.el"

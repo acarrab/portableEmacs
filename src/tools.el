@@ -31,8 +31,8 @@
 
 (use-package multi-term :ensure t
   :init (progn
-	  (setenv "SHELL" "/bin/zsh")
-	  (setq-default explicit-shell-file-name "/bin/zsh")
+	  ;; (setenv "SHELL" "/bin/zsh")
+	  ;; (setq-default explicit-shell-file-name "/bin/zsh")
 
 	  (defun run-term ()
 	    "Creates multi-term terminal in current window."

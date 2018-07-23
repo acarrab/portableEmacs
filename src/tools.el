@@ -15,7 +15,7 @@
   :bind ("C-c C-SPC" . company-complete))
 
 ;; displays files in current directory in nice way ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(use-package treemacs :ensure t :bind ("C-c l" . treemacs))
+(use-package treemacs :ensure t)
 
 ;; moving around windows in emacs ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package ace-window :ensure t :bind ("C-c j" . ace-window))
@@ -25,7 +25,8 @@
 (use-package yasnippet-snippets :ensure t)
 
 ;; allows for asynchronous file copy/move mostly with dired mode ;;;;;;;;;;;;;;
-(use-package async :ensure t :bind ("C-c c" . async-shell-command))
+(use-package async :ensure t :bind ("C-c M-c" . async-shell-command))
+(global-set-key (kbd "C-c c") 'shell-command)
 
 
 
@@ -45,6 +46,15 @@
   )
 
 (use-package magit :ensure t)
+
+(use-package multiple-cursors :ensure t
+  :bind (("C-c M-l" . mc/edit-lines)
+	 ("C->" . mc/mark-next-like-this)
+	 ("C-<" . mc/mark-previous-like-this)
+	 ("C-c l" . mc/mark-all-like-this))
+  )
+
+(add-hook 'prog-mode-hook #'hs-minor-mode)
 
 (provide 'src/tools)
 ;;; tools.el ends here

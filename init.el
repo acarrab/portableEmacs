@@ -1,7 +1,7 @@
 ;;; init --- init package for portableEmacs
 ;;; Commentary:
 ;;; Code:
-
+(tool-bar-mode -1)
 (defvar portable-emacs-dir)
 (setq portable-emacs-dir (file-name-directory (or load-file-name (buffer-file-name))))
 
@@ -19,7 +19,8 @@
 				  "src/project-views.el"
 				  "src/languages/webdev.el"
 				  "src/languages/python.el"
-				  "src/languages/cpp.el"))
+				  "src/languages/cpp.el"
+				  ))
 
 (defun load-portable-emacs (load-order)
   "Load portableEmacs given the LOAD-ORDER."

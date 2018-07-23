@@ -71,6 +71,13 @@
     (message "No .view.el file was found. Making config view file...")
     (find-file (expand-file-name ".view.el"))
     (erase-buffer)
+    (defun write-lines ()
+      )
+
+    (insert "(setq project-script-commands '())")
+    (newline nil)
+    (insert "(setq project-script-commands '())")
+    (newline nil)
     (insert "(setq project-script-commands '())")
     (newline nil)
     (insert "(setq project-files-to-open '())")

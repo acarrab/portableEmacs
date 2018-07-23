@@ -35,12 +35,13 @@ bash ./install.sh
 - ~C-c C-SPC~   company-complete
 - ~C-c j~   ace-window
 - ~C-c M-c~   async-shell-command
-- ~C-c t~   run-term
+- ~C-c x~   run-term
 - ~C-c M-l~   mc/edit-lines
 - ~C->~   mc/mark-next-like-this
 - ~C-<~   mc/mark-previous-like-this
 - ~C-c l~   mc/mark-all-like-this
 - ~C-c c~   shell-command
+- ~C-c M-x~   term
 - ~C-c v~   create-view
 
 * src/defaults.el
@@ -326,8 +327,9 @@ bash ./install.sh
 	    (setq-default truncate-lines nil)
 	    )
 	  )
-  :bind ("C-c t" . run-term)
+  :bind ("C-c x" . run-term)
   )
+(global-set-key (kbd "C-c M-x") 'term)
 
 (use-package magit :ensure t)
 
@@ -407,6 +409,13 @@ bash ./install.sh
     (message "No .view.el file was found. Making config view file...")
     (find-file (expand-file-name ".view.el"))
     (erase-buffer)
+    (defun write-lines ()
+      )
+
+    (insert "(setq project-script-commands '())")
+    (newline nil)
+    (insert "(setq project-script-commands '())")
+    (newline nil)
     (insert "(setq project-script-commands '())")
     (newline nil)
     (insert "(setq project-files-to-open '())")

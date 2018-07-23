@@ -42,8 +42,9 @@
 	    (setq-default truncate-lines nil)
 	    )
 	  )
-  :bind ("C-c t" . run-term)
+  :bind ("C-c x" . run-term)
   )
+(global-set-key (kbd "C-c M-x") 'term)
 
 (use-package magit :ensure t)
 
